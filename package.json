@@ -1,0 +1,22 @@
+{
+  "name": "goodyearwelt-sizes",
+  "version": "0.1.0",
+  "description": "Display manufacturer last sizes from /r/goodyearwelt",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dslaw/goodyearwelt-sizes"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "clean": "rm -rf node_modules && rm -f package-lock.json",
+    "test": "mocha --recursive"
+  },
+  "dependencies": {
+    "express": "4.15.x"
+  },
+  "devDependencies": {
+    "mocha": "4.0.x"
+  }
+}
