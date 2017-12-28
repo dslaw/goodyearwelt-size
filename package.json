@@ -9,7 +9,8 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "npm run download && node server.js",
+    "download": "bash scripts/download_data.sh",
     "clean": "rm -rf node_modules && rm -f package-lock.json",
     "test": "mocha --recursive"
   },
