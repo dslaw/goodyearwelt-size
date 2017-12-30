@@ -9,7 +9,7 @@ const {Listing} = require('./posts.js');
  * @return {Listing, Listing} {op, main_thread} - Thread data, `op`
  * giving the original post and `main_thread` giving the response.
  */
-const read_thread_data = (filename) => {
+const read_thread_data = function(filename) {
   let data = JSON.parse(
     fs.readFileSync(filename)
     .toString()
@@ -25,7 +25,7 @@ const read_thread_data = (filename) => {
  * @param {string} filename - The name of the file to read.
  * @return {Array[Listing]} subthreads
  */
-const read_subthreads = (filename) => {
+const read_subthreads = function(filename) {
   let {op, main_thread} = read_thread_data(filename);
   let comments = main_thread.children;
   let thread_author = _.first(op.children).author; 

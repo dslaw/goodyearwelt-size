@@ -1,13 +1,13 @@
 const _ = require("lodash");
 
 
-const mfilter = (collection, predicate) => {
+const mfilter = function(collection, predicate) {
   return _.filter(collection, item => {
     return _.isNil(item) ? false : predicate(item);
   });
 };
 
-const mmap = (collection, fn) => {
+const mmap = function(collection, fn) {
   return _.map(collection, item => {
     return _.isNil(item) ? item : fn(item);
   });

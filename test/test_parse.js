@@ -19,7 +19,7 @@ const unnest_subthreads = parse.__get__('unnest_subthreads');
 
 
 // Helper(s).
-const assert_all = (collection, predicate) => {
+const assert_all = function(collection, predicate) {
   const iteratee = (curr, nxt) => curr && predicate(nxt);
   const ok = reduce(collection, iteratee, true);
   assert.ok(ok);

@@ -10,11 +10,11 @@ const SIZE_PAIR_DELIM = ':';
  * @param {object} node - The parse5 HTML node.
  * @return {string} size - The Brannock size.
  */
-const get_brannock_size = (node) => {
+const get_brannock_size = function(node) {
   let header_node = node.childNodes[0];
   let size_node = _.last(header_node.childNodes);
   return size_node.value.trim();
-}
+};
 
 const strip_bold = (md) => md.replace(/\*\*/g, '');
 const strip_list = (md) => md.replace(/^\*\s+?/gm, '');
@@ -26,7 +26,7 @@ const strip_gt = (md) => md.replace(/^&gt;\s+?/gm, '');
  * @param {string} md - The markdown snippet to normalize.
  * @return {Array[string]} normalized - Normalized lines.
  */
-const normalize_md = (md) => {
+const normalize_md = function(md) {
   let lines = md.split('\n');
   return _(lines)
     .filter()
@@ -43,7 +43,7 @@ const normalize_md = (md) => {
  * @return {[string, string]} pair - The shoe-last and sizing-text
  * pair. Null if the line does not contain a sizing pair.
  */
-const split_sizing_pair = (line) => {
+const split_sizing_pair = function(line) {
   let parts = _.map(line.split(SIZE_PAIR_DELIM),  _.trim);
   if (parts.length != 2) {
     return null;
@@ -61,7 +61,7 @@ const split_sizing_pair = (line) => {
  * @param {Array[string]} lines - Comment as normalized markdown.
  * @return {Array[[string, string]]} pairs - Sizing pairs.
  */
-const parse_comment = (lines) => {
+const parse_comment = function(lines) {
   let pairs = _(lines)
     .map(split_sizing_pair)
     .compact()
@@ -74,7 +74,7 @@ const parse_comment = (lines) => {
  * @param {Array[Comment]} comments - Comments.
  * @return {Array[Array[[string, string]]]} pairs - Sizing pairs by comment.
  */
-const parse_comments = (comments) => {
+const parse_comments = function(comments) {
   return _(comments)
     .map(comment => comment.body)
     .compact()
@@ -90,7 +90,7 @@ const parse_comments = (comments) => {
  * (second-level comments only), where each Object is a line giving
  * sizing information.
  */
-const unnest_subthread = (subthread_comment) => {
+const unnest_subthread = function(subthread_comment) {
   let replies = _.get(subthread_comment, 'replies.children');
   if (_.isNil(replies)) {
     return [];
@@ -128,7 +128,7 @@ const unnest_subthread = (subthread_comment) => {
  * (second-level comments only), where each Object is a line giving
  * sizing information.
  */
-const unnest_subthreads = (subthreads) => {
+const unnest_subthreads = function(subthreads) {
   return _(subthreads)
     .map(unnest_subthread)
     .flatten()
