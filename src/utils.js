@@ -17,4 +17,4 @@ const mmap = (collection, fn) => {
 module.exports = {
   mfilter: mfilter,
   mmap: mmap,
-}
+};
