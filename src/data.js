@@ -1,6 +1,12 @@
 const _ = require('lodash');
 const fs = require('fs');
+const {unnest_subthreads} = require('./parse.js');
 const {Listing} = require('./posts.js');
+const {is_EU, sticky_match} = require('./sizes.js');
+
+
+const DEFAULT_INTL = 'US';
+const DEFAULT_WIDTH = 'D';
 
 
 /**
@@ -40,7 +46,54 @@ const read_subthreads = function(filename) {
   return subthreads;
 };
 
+/**
+ * Derive and coerce data, and set defaults.
+ * @param  {Object} obj - A parsed sizing (line) comment.
+ * @return {Object} data - A sizing (line) comment with derived values.
+ */
+const make_ready = function(obj) {
+  let {size, intl, width} = sticky_match(obj.text);
+  size = parseFloat(size);
+
+  // Try to guess international convention from size.
+  // Primarily to override the default value in the case
+  // when `intl` is null, 
+  if (is_EU(size)) {
+    if (intl !== 'EU') {
+      console.error(`Expected 'EU', got '${intl}' from '${obj.text}'`);
+    }
+    intl = 'EU';
+  }
+
+  if (_.some([size, intl, width], _.isNil)) {
+    console.debug(`Encountered one or more missing values from ${obj.text}`);
+  }
+
+  return _.merge({}, obj, {
+    size: size,
+    intl: intl || DEFAULT_INTL,
+    width: width || DEFAULT_WIDTH,
+  });
+};
+
+/**
+ * Load data from disk.
+ * @param {string} filename - The name of the file to read.
+ * @return {Array[Object]} data
+ */
+const __load_data = function(filename) {
+  let subthreads = read_subthreads(filename);
+  let flat = unnest_subthreads(subthreads);
+  return _(flat)
+    .filter(obj => !_.isNil(obj.text))
+    .map(make_ready)
+    .filter()
+    .value();
+};
+
+const load_data = _.memoize(__load_data);
+
 
 module.exports = {
-  read_subthreads: read_subthreads,
+  load_data: load_data,
 };

@@ -16,8 +16,10 @@ user_agent="${platform}:${npm_package_name}:v${npm_package_version} (by ${npm_pa
 
 mkdir -p ${output_subdir}
 
-curl --silent \
-    -X GET \
-    --header "User-Agent: ${user_agent}" \
-    ${url} \
-    | python -m json.tool > ${output_filename}
+if [[ ! -f ${output_filename} ]]; then
+    curl --silent \
+        -X GET \
+        --header "User-Agent: ${user_agent}" \
+        ${url} \
+        | python -m json.tool > ${output_filename}
+fi
