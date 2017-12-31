@@ -105,6 +105,9 @@ describe('Match specific patterns', () => {
     {line: '44EUR', size: '44', width: null, intl: 'EU'},
     {line: '44.0 EUR', size: '44.0', width: null, intl: 'EU'},
     {line: '44.0EUR', size: '44.0', width: null, intl: 'EU'},
+
+    // Misc edge cases.
+    {line: '10.5E,', size: '10.5', width: 'E', intl: null},
   ];
 
   // Parametrize.

@@ -24,12 +24,19 @@ const match_size = function(line) {
 };
 
 const match_width = function(line) {
-  let pattern = /(\s+)?((EEE)|(EE)|(E[^A-Z])|[ABCDFG])/i;
+  // The pattern /E(?!U)/ stops the regex from matching
+  // the 'E' in 'EU' when no width is specified. But if
+  // there is no space between an 'E' width and an intl
+  // of 'UK/US', the width will not be matched. The latter
+  // case can be matched via /E(?=U)/, but then the former
+  // will be broken. We opt to handle the former as it is
+  // significantly more common.
+  let pattern = /(\s+)?((EEE)|(EE)|(E(?!U))|[ABCDFG])/i;
   return match_regex(line, pattern);
 };
 
 const match_intl = function(line) {
-  let pattern = /(US)|(UK)|(EU)/i;
+  let pattern = /(\s+)?(US|UK|EU)/i;
   return match_regex(line, pattern);
 };
 
