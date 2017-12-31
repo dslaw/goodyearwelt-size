@@ -105,6 +105,12 @@ describe('Split sizing pair', () => {
     assert.strictEqual(pair, null);
   });
 
+  it('Should return null for unexpected notes', () => {
+    const line = 'Brannock/Notes: notes about things.';
+    const pair = split_sizing_pair(line);
+    assert.strictEqual(pair, null);
+  });
+
   it('Should split a colon delimited pair', () => {
     const expected = ['Manufacturer Last', '11D, additional notes.'];
 

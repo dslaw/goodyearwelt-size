@@ -51,9 +51,12 @@ const split_sizing_pair = function(line) {
 
   // Check if line is for notes, rather than specific size information.
   let [lhs, ,] = parts;
-  return lhs.toLowerCase().startsWith('note')
-    ? null
-    : parts;
+  if (lhs.toLowerCase().includes('note')) {
+    console.debug(`Encountered 'note' in manufacturer last '${line}'`);
+    return null;
+  }
+
+  return parts;
 };
 
 /**
