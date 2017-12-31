@@ -1,5 +1,5 @@
 const assert = require('assert');
-const {reduce} = require('lodash');
+const {every, map} = require('lodash');
 const rewire = require('rewire');
 const parse = rewire('../src/parse.js');
 
@@ -20,8 +20,7 @@ const unnest_subthreads = parse.__get__('unnest_subthreads');
 
 // Helper(s).
 const assert_all = function(collection, predicate) {
-  const iteratee = (curr, nxt) => curr && predicate(nxt);
-  const ok = reduce(collection, iteratee, true);
+  let ok = every(map(collection, predicate));
   assert.ok(ok);
 };
 
