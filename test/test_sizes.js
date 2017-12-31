@@ -137,12 +137,12 @@ describe('Match specific patterns', () => {
 
 describe('Check if a shoe size is EU', () => {
   it('Should be false', () => {
-    assert.ok(!sizes.is_EU('8'));
-    assert.ok(!sizes.is_EU('14'));
+    assert.ok(!sizes.is_EU(8));
+    assert.ok(!sizes.is_EU(14));
   });
 
   it('Should be true', () => {
-    assert.ok(sizes.is_EU('39'));
-    assert.ok(sizes.is_EU('49'));
+    assert.ok(sizes.is_EU(39));
+    assert.ok(sizes.is_EU(49));
   });
 });

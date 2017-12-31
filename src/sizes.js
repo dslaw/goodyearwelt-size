@@ -34,7 +34,7 @@ const match_intl = function(line) {
 };
 
 const is_EU = function(size) {
-  return parseFloat(size) >= 39;
+  return size >= 39;
 };
 
 const sticky_match = function(line) {
