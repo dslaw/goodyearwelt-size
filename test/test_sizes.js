@@ -136,6 +136,23 @@ describe('Match specific patterns', () => {
     });
   });
 
+  // Expected fails.
+  it.skip('Should extract ordered data when not space delimited', () => { 
+    const xfail_cases = [
+      {line: '7.5EUK', size: '7.5', width: 'E', intl: 'UK'},
+      {line: '7.5EUS', size: '7.5', width: 'E', intl: 'US'},
+    ];
+
+    xfail_cases.forEach((obj) => {
+      const expected = {
+        size: obj.size,
+        width: obj.width,
+        intl: obj.intl,
+      };
+      const out = sizes.sticky_match(obj.line);
+      assert.deepStrictEqual(out, expected);
+    });
+  });
 });
 
 describe('Check if a shoe size is EU', () => {

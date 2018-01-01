@@ -63,6 +63,11 @@ const make_ready = function(obj) {
       console.error(`Expected 'EU', got '${intl}' from '${obj.text}'`);
     }
     intl = 'EU';
+  } else {
+    if (intl === 'EU') {
+      console.error(`Expected 'US' or 'UK', got '${intl}' from '${obj.text}'`);
+      return null;
+    }
   }
 
   if (_.some([size, intl, width], _.isNil)) {
