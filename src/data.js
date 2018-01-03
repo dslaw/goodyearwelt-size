@@ -86,7 +86,7 @@ const make_ready = function(obj) {
  * @param {string} filename - The name of the file to read.
  * @return {Array[Object]} data
  */
-const __load_data = function(filename) {
+const load_data = _.memoize((filename) => {
   let subthreads = read_subthreads(filename);
   let flat = unnest_subthreads(subthreads);
   return _(flat)
@@ -94,9 +94,7 @@ const __load_data = function(filename) {
     .map(make_ready)
     .filter()
     .value();
-};
-
-const load_data = _.memoize(__load_data);
+});
 
 
 module.exports = {
