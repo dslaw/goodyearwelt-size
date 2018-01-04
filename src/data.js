@@ -70,6 +70,11 @@ const make_ready = function(obj) {
     }
   }
 
+  if (_.every([size, intl, width], _.isNil)) {
+    console.error(`Failed to extract any information from '${obj.text}'`);
+    return null;
+  }
+
   if (_.some([size, intl, width], _.isNil)) {
     console.debug(`Encountered one or more missing values from ${obj.text}`);
   }
