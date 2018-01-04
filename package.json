@@ -1,6 +1,6 @@
 {
   "name": "goodyearwelt-sizes",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Display manufacturer last sizes from /r/goodyearwelt",
   "license": "MIT",
   "repository": {
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "express": "4.15.x",
+    "handlebars": "4.0.x",
     "lodash": "4.17.x",
     "markdown": "0.5.x",
     "parse5": "3.0.x"

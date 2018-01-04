@@ -7,6 +7,7 @@ const container = rewire('../src/container.js');
 const split_brannock = container.__get__('split_brannock');
 const brannock_cmp = container.__get__('brannock_cmp');
 const get_sizes = container.__get__('get_sizes');
+const get_template = container.__get__('get_template');
 
 
 describe('Split Brannock size', () => {
@@ -75,9 +76,9 @@ describe('Get Brannock sizes', () => {
 
 describe('Sizing data container', () => {
   const sizing = [
-    {brannock_size: '8D', text: 'foo'},
-    {brannock_size: '8D', text: 'bar'},
-    {brannock_size: '10D', text: 'baz'},
+    {brannock_size: '8D', size: 8, width: 'D', text: 'foo'},
+    {brannock_size: '8D', size: 8, width: 'D', text: 'bar'},
+    {brannock_size: '10D', size: 10, width: 'D', text: 'baz'},
   ];
 
   it('Should group data', () => {
@@ -92,5 +93,28 @@ describe('Sizing data container', () => {
     const expected = ['8D', '10D'];
     const sd = new container.SizingData(sizing);
     assert.deepStrictEqual(sd.sizes, expected);
+  });
+
+  it('Should render sizes', () => {
+    const expected = '<ul>8D</ul>\n<ul>10D</ul>\n';
+    const sd = new container.SizingData(sizing);
+    const out = sd.render_sizes('./test/data/snippet.html');
+    assert.strictEqual(out, expected);
+  });
+
+  it('Should render data', () => {
+    const expected = '<ul>10D</ul>\n';
+    const sd = new container.SizingData(sizing);
+    const out = sd.render_data('./test/data/snippet.html', '10D');
+    assert.strictEqual(out, expected);
+  });
+});
+
+describe('Get template', () => {
+  it('Should compile an HTML template', () => {
+    const expected = '<ul>text</ul>\n';
+    const fn = get_template('./test/data/snippet.html');
+    const out = fn({sizes: ['text']});
+    assert.strictEqual(out, expected);
   });
 });

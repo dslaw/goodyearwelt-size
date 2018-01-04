@@ -1,0 +1,9 @@
+{{#if sizes}}
+{{#each sizes~}}
+  <ul>{{this}}</ul>
+{{/each}}
+{{else if data}}
+  {{#each data~}}
+    <ul>{{this.size}}{{this.width}}</ul>
+  {{/each}}
+{{/if}}
