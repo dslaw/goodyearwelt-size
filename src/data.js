@@ -1,8 +1,6 @@
 const _ = require('lodash');
-const fs = require('fs');
-const {unnest_subthreads} = require('./parse.js');
-const {Listing} = require('./posts.js');
 const {post_match, precedes_match} = require('./extract.js');
+const {Listing} = require('./posts.js');
 
 
 const DEFAULT_INTL = 'US';
@@ -10,29 +8,13 @@ const DEFAULT_WIDTH = 'D';
 
 
 /**
- * Read the Reddit thread from disk.
- * @param {string} filename - The name of the file to read.
- * @return {Listing, Listing} {op, main_thread} - Thread data, `op`
- * giving the original post and `main_thread` giving the response.
- */
-const read_thread_data = function(filename) {
-  let data = JSON.parse(
-    fs.readFileSync(filename)
-    .toString()
-  );
-
-  let [op, main_thread] = _.map(data, listing => new Listing(listing));
-  return {op, main_thread};
-};
-
-/**
- * Read the Reddit thread from disk, extracting each subthread,
- * where a subthread is a top-level comment with it's own replies.
- * @param {string} filename - The name of the file to read.
+ * Extract each subthread from the raw thread data, where a
+ * subthread is a top-level comment with it's own replies.
+ * @param {Object} raw_thread - The thread, deserialized JSON.
  * @return {Array[Listing]} subthreads
  */
-const read_subthreads = function(filename) {
-  let {op, main_thread} = read_thread_data(filename);
+const to_subthreads = function(raw_thread) {
+  let [op, main_thread] = _.map(raw_thread, listing => new Listing(listing));
   let comments = main_thread.children;
   let thread_author = _.first(op.children).author; 
 
@@ -127,21 +109,21 @@ const make_ready = function(obj) {
 };
 
 /**
- * Load data from disk.
- * @param {string} filename - The name of the file to read.
- * @return {Array[Object]} data
+ * Apply processing logic to each reply.
+ * A reply is a line giving sizing information.
+ * @param {Array[Object]} replies - Thread replies.
+ * @return {Array[Object]} processed
  */
-const load_data = _.memoize((filename) => {
-  let subthreads = read_subthreads(filename);
-  let flat = unnest_subthreads(subthreads);
-  return _(flat)
+const process_replies = function(replies) {
+  return _(replies)
     .filter(obj => !_.isNil(obj.text))
     .map(make_ready)
     .filter()
     .value();
-});
+};
 
 
 module.exports = {
-  load_data: load_data,
+  process_replies: process_replies,
+  to_subthreads: to_subthreads,
 };

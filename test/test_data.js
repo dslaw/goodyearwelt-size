@@ -92,3 +92,21 @@ describe('Make sizing data ready for serving', () => {
     assert.strictEqual(out, null);
   });
 });
+
+describe('Process text from replies', () => {
+  it('Should extract data and remove nulls', () => {
+    const replies = [
+      {text: null},
+      {text: 'US 12D'},
+      {text: 'Not something useful'},
+      {text: 'UK 8.5'},
+    ];
+    const expected = [
+      {text: 'US 12D', size: 12, intl: 'US', width: 'D'},
+      {text: 'UK 8.5', size: 8.5, intl: 'UK', width: 'D'},
+    ];
+
+    const out = data.process_replies(replies);
+    assert.deepStrictEqual(out, expected);
+  });
+});

@@ -5,7 +5,6 @@ const container = rewire('../src/container.js');
 
 // Private functions.
 const get_sizes = container.__get__('get_sizes');
-const get_template = container.__get__('get_template');
 
 
 describe('Get Brannock sizes', () => {
@@ -48,6 +47,31 @@ describe('Sizing data container', () => {
     assert.deepStrictEqual(sd.sizes, expected);
   });
 
+  it('Should recover input data', () => {
+    const sd = new container.SizingData(sizing);
+    const out = sd.get();
+    assert.deepStrictEqual(out, sizing);
+  });
+
+  it('Should get data by size', () => {
+    const sd = new container.SizingData(sizing);
+    assert.deepStrictEqual(sd.get_size('8D'), [
+      {brannock_size: '8D', size: 8, width: 'D', text: 'foo'},
+      {brannock_size: '8D', size: 8, width: 'D', text: 'bar'},
+    ]);
+    assert.deepStrictEqual(sd.get_size('10D'), [
+      {brannock_size: '10D', size: 10, width: 'D', text: 'baz'},
+    ]);
+  });
+
+  it('Should return empty array when specified size is not present', () => {
+    const sd = new container.SizingData(sizing);
+    assert.deepStrictEqual(sd.get_size('14E'), []);
+    assert.deepStrictEqual(sd.get_size(''), []);
+    assert.deepStrictEqual(sd.get_size(null), []);
+    assert.deepStrictEqual(sd.get_size(undefined), []);
+  });
+
   it('Should render sizes', () => {
     const expected = '<ul>8D</ul>\n<ul>10D</ul>\n';
     const sd = new container.SizingData(sizing);
@@ -59,15 +83,6 @@ describe('Sizing data container', () => {
     const expected = '<ul>10D</ul>\n';
     const sd = new container.SizingData(sizing);
     const out = sd.render_data('./test/data/snippet.html', '10D');
-    assert.strictEqual(out, expected);
-  });
-});
-
-describe('Get template', () => {
-  it('Should compile an HTML template', () => {
-    const expected = '<ul>text</ul>\n';
-    const fn = get_template('./test/data/snippet.html');
-    const out = fn({sizes: ['text']});
     assert.strictEqual(out, expected);
   });
 });
