@@ -12,4 +12,5 @@ docker build --tag gyw-sizes .
 docker run -p 3030:3030 -d gyw-sizes
 ```
 
-Sizing data, as JSON, can then be gotten from `http://localhost:3000/sizing`.
+Navigate to `http://localhost:3030/` for the site. Alternatively, sizing data,
+as JSON, can be gotten from `http://localhost:3030/sizing`.
