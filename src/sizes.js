@@ -31,12 +31,12 @@ const match_width = function(line) {
   // case can be matched via /E(?=U)/, but then the former
   // will be broken. We opt to handle the former as it is
   // significantly more common.
-  let pattern = /(\s+)?((EEE)|(EE)|(E(?!U))|[ABCDFG])/i;
+  let pattern = /^(\s+)?((EEE)|(EE)|(E(?!U))|[ABCDFG])/i;
   return match_regex(line, pattern);
 };
 
 const match_intl = function(line) {
-  let pattern = /(\s+)?(US|UK|EU)/i;
+  let pattern = /^(\s+)?(US|UK|EU)/i;
   return match_regex(line, pattern);
 };
 

@@ -108,6 +108,8 @@ describe('Match specific patterns', () => {
 
     // Misc edge cases.
     {line: '10.5E,', size: '10.5', width: 'E', intl: null},
+    {line: '8 (best...)', size: '8', width: null, intl: null},
+    {line: '8/8E', size: '8', width: null, intl: null},
   ];
 
   // Parametrize.
