@@ -2,7 +2,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const {unnest_subthreads} = require('./parse.js');
 const {Listing} = require('./posts.js');
-const {is_EU, sticky_match} = require('./sizes.js');
+const {is_EU, post_match, precedes_match} = require('./sizes.js');
 
 
 const DEFAULT_INTL = 'US';
@@ -52,37 +52,68 @@ const read_subthreads = function(filename) {
  * @return {Object} data - A sizing (line) comment with derived values.
  */
 const make_ready = function(obj) {
-  let {size, intl, width} = sticky_match(obj.text);
-  size = parseFloat(size);
+  // 'post' is the first option, as it checks for the correct format.
+  // 'precedes' is used as a fallback iff it extracts _more_ data
+  // than 'post'. Specifically, the intl convention, which is where
+  // the functions differ in implementation.
+  let post = post_match(obj.text);
+  let pre = precedes_match(obj.text);
+
+  if (post.size !== pre.size) {
+    console.error(
+      `Expected sizes to match, ` +
+      `instead got '${post.text}' and '${pre.text}'`
+    );
+    return null;
+  }
+
+  let sizing = post;
+  if (_.isNil(post.intl) && !_.isNil(pre.intl)) {
+    console.debug(
+      `Intl found using precedes_match but not post_match, ` +
+      `falling back to precedes_match`
+    );
+    sizing = pre;
+  }
+
+  if (_.every(sizing, _.isNil)) {
+    console.error(`Failed to extract any information from '${obj.text}'`);
+    return null;
+  }
+
+  let size = parseFloat(sizing.size);
+  if (_.isNaN(size)) {
+    // Should not be possible given the regex used.
+    console.error(`Extracted unparsable size '${sizing.size}'`);
+    return null;
+  }
 
   // Try to guess international convention from size.
   // Primarily to override the default value in the case
   // when `intl` is null, 
   if (is_EU(size)) {
-    if (intl !== 'EU') {
-      console.error(`Expected 'EU', got '${intl}' from '${obj.text}'`);
+    if (sizing.intl !== 'EU') {
+      console.error(`Expected 'EU', got '${sizing.intl}' from '${obj.text}'`);
     }
-    intl = 'EU';
+    sizing.intl = 'EU';
   } else {
-    if (intl === 'EU') {
-      console.error(`Expected 'US' or 'UK', got '${intl}' from '${obj.text}'`);
+    if (sizing.intl === 'EU') {
+      console.error(
+        `Expected 'US' or 'UK', got '${sizing.intl}' ` +
+        `from '${obj.text}'
+      `);
       return null;
     }
   }
 
-  if (_.every([size, intl, width], _.isNil)) {
-    console.error(`Failed to extract any information from '${obj.text}'`);
-    return null;
-  }
-
-  if (_.some([size, intl, width], _.isNil)) {
+  if (_.some(sizing, _.isNil)) {
     console.debug(`Encountered one or more missing values from ${obj.text}`);
   }
 
   return _.merge({}, obj, {
     size: size,
-    intl: intl || DEFAULT_INTL,
-    width: width || DEFAULT_WIDTH,
+    intl: sizing.intl || DEFAULT_INTL,
+    width: sizing.width || DEFAULT_WIDTH,
   });
 };
 

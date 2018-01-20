@@ -1,6 +1,3 @@
-const MAX_CHARS_AHEAD = 4; // Space + three chars for `EEE`.
-
-
 const match_regex = function(line, pattern) {
   let ret = pattern.exec(line);
   if (!ret) {
@@ -31,12 +28,17 @@ const match_width = function(line) {
   // case can be matched via /E(?=U)/, but then the former
   // will be broken. We opt to handle the former as it is
   // significantly more common.
-  let pattern = /^(\s+)?((EEE)|(EE)|(E(?!U))|[ABCDFG])/i;
+  let pattern = /^\s?((EEE)|(EE)|(E(?!U))|[ABCDFG])/i;
   return match_regex(line, pattern);
 };
 
 const match_intl = function(line) {
-  let pattern = /^(\s+)?(US|UK|EU)/i;
+  let pattern = /^\s?(US|UK|EU)/i;
+  return match_regex(line, pattern);
+};
+
+const match_intl_preceding = (line) => {
+  let pattern = /(US|UK|(EU)R?)(?=\s?[0-9])/i;
   return match_regex(line, pattern);
 };
 
@@ -44,10 +46,14 @@ const is_EU = function(size) {
   return size >= 39;
 };
 
-const sticky_match = function(line) {
-  let fns = [match_size, match_width, match_intl];
+const collapse_spaces = function(string) {
+  return string.replace(/\s+/g, ' ');
+};
+
+const sticky_match = function(line, fns, n_chars) {
+  // Ensure output is always uppercase. Spacing won't be returned.
+  let input_string = collapse_spaces(line).toUpperCase();
   let matches = [];
-  let input_string = line.toUpperCase(); // Output is always uppercase.
   let start_pos = 0
     end_pos = input_string.length;
 
@@ -60,12 +66,19 @@ const sticky_match = function(line) {
       // positives, otherwise (i.e. if notes are present and not
       // international convention).
       start_pos += index + match.length;
-      end_pos = start_pos + MAX_CHARS_AHEAD;
+      end_pos = start_pos + n_chars;
       match = match.trim();
     }
     matches.push(match || null);
   }
 
+  return matches;
+};
+
+const post_match = function(line) {
+  let fns = [match_size, match_width, match_intl];
+  let max_chars_ahead = 4 // Space + three chars for 'EEE'.
+  let matches = sticky_match(line, fns, max_chars_ahead);
   return {
     size: matches[0],
     width: matches[1],
@@ -73,8 +86,20 @@ const sticky_match = function(line) {
   };
 };
 
+const precedes_match = function(line) {
+  let fns = [match_intl_preceding, match_size, match_width];
+  let max_chars_ahead = 6 // Space, R (from EUR) and four chars for e.g. 11.5.
+  let matches = sticky_match(line, fns, max_chars_ahead);
+  return {
+    size: matches[1],
+    width: matches[2],
+    intl: matches[0] === 'EUR' ? 'EU' : matches[0],
+  };
+};
+
 
 module.exports = {
   is_EU: is_EU,
-  sticky_match: sticky_match,
+  post_match: post_match,
+  precedes_match: precedes_match,
 };

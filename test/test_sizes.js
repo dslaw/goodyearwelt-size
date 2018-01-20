@@ -3,6 +3,7 @@ const rewire = require('rewire');
 const sizes = rewire('../src/sizes.js');
 
 // Private functions.
+const collapse_spaces = sizes.__get__('collapse_spaces');
 const match_regex = sizes.__get__('match_regex');
 
 
@@ -26,7 +27,25 @@ describe('Match regular expression', () => {
   });
 });
 
+describe('Collapse whitespace to a single space', () => {
+  const expected = 'hello world';
+  const inputs = [
+    'hello world',
+    'hello  world',
+    'hello\tworld',
+    'hello\nworld',
+  ];
+
+  inputs.forEach((input) => {
+    it(`Should collapse whitespace for ${input}`, () => {
+      const out = collapse_spaces(input);
+      assert.strictEqual(out, expected);
+    });
+  });
+});
+
 describe('Match specific patterns', () => {
+  const notes = ', words (and another 9UK size).';
   const input_expectations = [
     // Whole sizes, no international specification.
     {line: '8', size: '8', width: null, intl: null},
@@ -120,12 +139,11 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.sticky_match(obj.line);
+      const out = sizes.post_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });
 
-  const notes = ', words (and another 9UK size).';
   input_expectations.forEach((obj) => {
     it(`Should extract ordered data when addtl notes are present from '${obj.line}'`, () => {
       const expected = {
@@ -133,7 +151,65 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.sticky_match(obj.line + notes);
+      const out = sizes.post_match(obj.line + notes);
+      assert.deepStrictEqual(out, expected);
+    });
+  });
+
+  const input_expectations_precedes = [
+    // US precedes size.
+    {line: 'US8', size: '8', width: null, intl: 'US'},
+    {line: 'US 8', size: '8', width: null, intl: 'US'},
+    {line: 'US8D', size: '8', width: 'D', intl: 'US'},
+    {line: 'US 8D', size: '8', width: 'D', intl: 'US'},
+    {line: 'US8.5', size: '8.5', width: null, intl: 'US'},
+    {line: 'US 8.5', size: '8.5', width: null, intl: 'US'},
+    {line: 'US8.5D', size: '8.5', width: 'D', intl: 'US'},
+    {line: 'US 8.5D', size: '8.5', width: 'D', intl: 'US'},
+
+    // UK precedes size.
+    {line: 'UK8', size: '8', width: null, intl: 'UK'},
+    {line: 'UK 8', size: '8', width: null, intl: 'UK'},
+    {line: 'UK8D', size: '8', width: 'D', intl: 'UK'},
+    {line: 'UK 8D', size: '8', width: 'D', intl: 'UK'},
+    {line: 'UK8.5', size: '8.5', width: null, intl: 'UK'},
+    {line: 'UK 8.5', size: '8.5', width: null, intl: 'UK'},
+    {line: 'UK8.5D', size: '8.5', width: 'D', intl: 'UK'},
+    {line: 'UK 8.5D', size: '8.5', width: 'D', intl: 'UK'},
+
+    // EU precedes size.
+    {line: 'EU44', size: '44', width: null, intl: 'EU'},
+    {line: 'EU 44', size: '44', width: null, intl: 'EU'},
+    {line: 'EU44.0', size: '44.0', width: null, intl: 'EU'},
+    {line: 'EU 44.0', size: '44.0', width: null, intl: 'EU'},
+
+    // EUR precedes size.
+    {line: 'EUR44', size: '44', width: null, intl: 'EU'},
+    {line: 'EUR 44', size: '44', width: null, intl: 'EU'},
+    {line: 'EUR44.0', size: '44.0', width: null, intl: 'EU'},
+    {line: 'EUR 44.0', size: '44.0', width: null, intl: 'EU'},
+  ];
+
+  input_expectations_precedes.forEach((obj) => {
+    it(`Should extract ordered data from '${obj.line}'`, () => {
+      const expected = {
+        size: obj.size,
+        width: obj.width,
+        intl: obj.intl,
+      };
+      const out = sizes.precedes_match(obj.line);
+      assert.deepStrictEqual(out, expected);
+    });
+  });
+
+  input_expectations_precedes.forEach((obj) => {
+    it(`Should extract ordered data when addtl notes are present from '${obj.line}'`, () => {
+      const expected = {
+        size: obj.size,
+        width: obj.width,
+        intl: obj.intl,
+      };
+      const out = sizes.precedes_match(obj.line + notes);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -151,7 +227,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.sticky_match(obj.line);
+      const out = sizes.post_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });
