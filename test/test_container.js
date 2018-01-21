@@ -4,70 +4,23 @@ const container = rewire('../src/container.js');
 
 
 // Private functions.
-const split_brannock = container.__get__('split_brannock');
-const brannock_cmp = container.__get__('brannock_cmp');
 const get_sizes = container.__get__('get_sizes');
 const get_template = container.__get__('get_template');
 
-
-describe('Split Brannock size', () => {
-  const size_expected = [
-    {size: '8D', expected: {size: 8, width: 'D'}},
-    {size: '8.5D', expected: {size: 8.5, width: 'D'}},
-    {size: '10D', expected: {size: 10, width: 'D'}},
-    {size: '10.5D', expected: {size: 10.5, width: 'D'}},
-  ];
-
-  size_expected.forEach(obj => {
-    it(`Should split into size and width for ${obj.size}`, () => {
-      const out = split_brannock(obj.size);
-      assert.deepStrictEqual(out, obj.expected);
-    });
-  });
-});
-
-describe('Compare two Brannock sizes', () => {
-  it('Should return -1 based on size', () => {
-    const cmp = brannock_cmp('8.5D', '10D');
-    assert.strictEqual(cmp, -1);
-  });
-
-  it('Should return 0 based on size', () => {
-    const cmp = brannock_cmp('10D', '10D');
-    assert.strictEqual(cmp, 0);
-  });
-
-  it('Should return 1 based on size', () => {
-    const cmp = brannock_cmp('10D', '8.5D');
-    assert.strictEqual(cmp, 1);
-  });
-
-  it('Should return -1 based on width', () => {
-    const cmp = brannock_cmp('10D', '10E');
-    assert.strictEqual(cmp, -1);
-  });
-
-  it('Should return 0 based on width', () => {
-    const cmp = brannock_cmp('10E', '10E');
-    assert.strictEqual(cmp, 0);
-  });
-
-  it('Should return 1 based on width', () => {
-    const cmp = brannock_cmp('10E', '10D');
-    assert.strictEqual(cmp, 1);
-  });
-});
 
 describe('Get Brannock sizes', () => {
   it('Should return sorted sizes', () => { 
     // Values in the array don't matter here.
     const grouped_data = {
-      '8D': [1, 2, 3],
-      '10D': [1, 2, 3],
-      '11D': [1, 2, 3],
-      '11E': [1, 2, 3],
+      '8D': [1, 2],
+      '10D': [1, 2],
+      '10E': [1, 2],
+      '10EE': [1, 2],
+      '11D': [1, 2],
+      '8A': [1, 2],
+      '8F': [1, 2],
     };
-    const expected = ['8D', '10D', '11D', '11E'];
+    const expected = ['8A', '8D', '8F', '10D', '10E', '10EE', '11D'];
 
     const out = get_sizes(grouped_data);
     assert.deepStrictEqual(out, expected);

@@ -5,7 +5,6 @@ const parse = rewire('../src/parse.js');
 
 
 // Private functions.
-const get_brannock_size = parse.__get__('get_brannock_size');
 const strip_bold = parse.__get__('strip_bold');
 const strip_list = parse.__get__('strip_list');
 const strip_dash = parse.__get__('strip_dash');
@@ -24,10 +23,6 @@ const assert_all = function(collection, predicate) {
   assert.ok(ok);
 };
 
-
-// TODO
-describe('Get brannock size', () => {
-});
 
 describe('Normalize markdown', () => {
   it('Should remove bold markers', () => {

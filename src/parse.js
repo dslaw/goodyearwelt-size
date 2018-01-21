@@ -1,20 +1,9 @@
 const _ = require('lodash');
-const {to_html_tree} = require('./posts.js');
+const {BrannockSize} = require('./posts.js');
 
 
 const SIZE_PAIR_DELIM = ':';
 
-
-/**
- * Get Brannock size from an HTML node.
- * @param {object} node - The parse5 HTML node.
- * @return {string} size - The Brannock size.
- */
-const get_brannock_size = function(node) {
-  let header_node = node.childNodes[0];
-  let size_node = _.last(header_node.childNodes);
-  return size_node.value.trim();
-};
 
 const strip_bold = (md) => md.replace(/\*\*/g, '');
 const strip_list = (md) => md.replace(/^\*\s+?/gm, '');
@@ -100,7 +89,7 @@ const unnest_subthread = function(subthread_comment) {
   }
 
   const subthread_metadata = {
-    brannock_size: get_brannock_size(to_html_tree(subthread_comment)),
+    brannock_size: BrannockSize.from_comment(subthread_comment).toString(),
     brannock_size_comment_id: subthread_comment.id,
   };
   const merge_with = (obj) => _.merge({}, subthread_metadata, obj);

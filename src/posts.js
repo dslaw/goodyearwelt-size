@@ -1,6 +1,8 @@
 const _ = require('lodash');
-const markdown = require('markdown').markdown;
-const parse5 = require('parse5');
+
+
+const SIZE_PATTERN = /([0-9]{1,2}(\.5)?)/i;
+const COMMENT_PATTERN = new RegExp(`(${SIZE_PATTERN.source}([A-Z]{1,3}))`, 'i');
 
 
 class Listing {
@@ -40,22 +42,54 @@ class Comment {
   }
 }
 
-const to_html_tree = (comment) => {
-  // NB: The HTML representation of a comment (`body_html`) contains HTML
-  //     entities rather than characters, which parse5 doesn't handle.
-  //     So the markdown representation (`body`) is used, instead.
-  let md = comment.body;
-  if (md === undefined) {
-    throw new Error;
+class BrannockSize {
+  constructor(size, width) {
+    this.size = parseFloat(size);
+    this.width = width.toUpperCase();
   }
 
-  let html = markdown.toHTML(md);
-  return parse5.parseFragment(html);
+  toString() {
+    return `${this.size}${this.width}`;
+  }
+
+  /**
+   * Instantiate from a string giving a Brannock size.
+   * @param {string} string - Brannock size as a string.
+   * @return {BrannockSize} size - Modeled Brannock size.
+   */
+  static fromString(string) {
+    let input_string = string.trim();
+    let [match, ...rest] = SIZE_PATTERN.exec(input_string);
+    let width = input_string.replace(match, '');
+    return new this(match, width);
+  }
+
+  /**
+   * Instantiate from a Reddit comment containing a size.
+   * @param {Comment} comment - Comment specifying a Brannock size.
+   * @param {BrannockSize} size - Modeled Brannock size.
+   */
+  static from_comment(comment) {
+    // NB: The HTML representation of a comment (`body_html`) contains HTML
+    //     entities rather than characters, which parse5 doesn't handle.
+    //     So the markdown representation (`body`) is used, instead.
+    let md = comment.body;
+    if (md === undefined) {
+      throw new Error;
+    }
+
+    var [match, ...rest] = COMMENT_PATTERN.exec(md);
+    if (match == null) {
+      throw new Error;
+    }
+
+    return this.fromString(match);
+  }
 }
 
 
 module.exports = {
-  Listing: Listing,
+  BrannockSize: BrannockSize,
   Comment: Comment,
-  to_html_tree: to_html_tree,
+  Listing: Listing,
 };

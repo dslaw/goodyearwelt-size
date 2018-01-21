@@ -1,6 +1,6 @@
 const assert = require('assert');
 const {cloneDeep} = require('lodash');
-const {Comment, Listing, to_html_tree} = require('../src/posts.js');
+const {BrannockSize, Comment, Listing} = require('../src/posts.js');
 
 
 const t1_comment = {
@@ -113,18 +113,48 @@ describe('Modeled Reddit listing', () => {
   });
 });
 
-describe('Markdown to HTML', () => {
-  const mock_post = {
-    'body': '# First\nParagraph'
-  };
+describe('Modeled Brannock size', () => {
+  it('Should instantiate from string values', () => {
+    const bs = new BrannockSize('8.5', 'd');
+    assert.strictEqual(bs.size, 8.5);
+    assert.strictEqual(bs.width, 'D');
+  });
 
-  it('Should convert markdown snippet', () => {
-    const ast = to_html_tree(mock_post);
+  const string_expected = [
+    {string: '8D', size: 8, width: 'D'},
+    {string: '8.5D', size: 8.5, width: 'D'},
+    {string: '10D', size: 10, width: 'D'},
+    {string: '10.5D', size: 10.5, width: 'D'},
+  ];
 
-    assert.equal(ast.childNodes.length, 3);
-    const [h1, newline, p] = ast.childNodes;
-    assert.equal(h1.nodeName, 'h1');
-    assert.equal(newline.nodeName, '#text');
-    assert.equal(p.nodeName, 'p');
+  string_expected.forEach(obj => {
+    it(`Should instantiate string '${obj.string}'`, () => {
+      const bs = BrannockSize.fromString(obj.string);
+      assert.strictEqual(bs.size, obj.size);
+      assert.strictEqual(bs.width, obj.width);
+    });
+  });
+
+  it('Should instantiate from a comment', () => {
+    const mock_comment = {
+      body: '##**Brannock:** 8.5D',
+      id: 'id123',
+    };
+    const bs = BrannockSize.from_comment(mock_comment);
+    assert.strictEqual(bs.size, 8.5);
+    assert.strictEqual(bs.width, 'D');
+  });
+
+  it('Should cast to string', () => {
+    const expected = '8.5D';
+    const bs = new BrannockSize('8.5', 'd');
+    assert.strictEqual(bs.toString(), expected);
+  });
+
+  it('Should instantiate from the result of a string cast', () => {
+    const bs = new BrannockSize('8.5', 'd');
+    const out = BrannockSize.fromString(bs.toString());
+    assert.strictEqual(bs.size, out.size);
+    assert.strictEqual(bs.width, out.width);
   });
 });
