@@ -1,10 +1,10 @@
 const assert = require('assert');
 const rewire = require('rewire');
-const sizes = rewire('../src/sizes.js');
+const extract = rewire('../src/extract.js');
 
 // Private functions.
-const collapse_spaces = sizes.__get__('collapse_spaces');
-const match_regex = sizes.__get__('match_regex');
+const collapse_spaces = extract.__get__('collapse_spaces');
+const match_regex = extract.__get__('match_regex');
 
 
 describe('Match regular expression', () => {
@@ -139,7 +139,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.post_match(obj.line);
+      const out = extract.post_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -151,7 +151,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.post_match(obj.line + notes);
+      const out = extract.post_match(obj.line + notes);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -197,7 +197,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.precedes_match(obj.line);
+      const out = extract.precedes_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -209,7 +209,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.precedes_match(obj.line + notes);
+      const out = extract.precedes_match(obj.line + notes);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -227,20 +227,8 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = sizes.post_match(obj.line);
+      const out = extract.post_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
-  });
-});
-
-describe('Check if a shoe size is EU', () => {
-  it('Should be false', () => {
-    assert.ok(!sizes.is_EU(8));
-    assert.ok(!sizes.is_EU(14));
-  });
-
-  it('Should be true', () => {
-    assert.ok(sizes.is_EU(39));
-    assert.ok(sizes.is_EU(49));
   });
 });

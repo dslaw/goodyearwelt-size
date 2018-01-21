@@ -4,8 +4,21 @@ const data = rewire('../src/data.js');
 
 
 // Private functions.
+const is_EU = data.__get__('is_EU');
 const make_ready = data.__get__('make_ready');
 
+
+describe('Check if a shoe size is EU', () => {
+  it('Should be false', () => {
+    assert.ok(!is_EU(8));
+    assert.ok(!is_EU(14));
+  });
+
+  it('Should be true', () => {
+    assert.ok(is_EU(39));
+    assert.ok(is_EU(49));
+  });
+});
 
 describe('Make sizing data ready for serving', () => {
   it('Should set values', () => {

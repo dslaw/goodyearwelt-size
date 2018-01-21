@@ -2,7 +2,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const {unnest_subthreads} = require('./parse.js');
 const {Listing} = require('./posts.js');
-const {is_EU, post_match, precedes_match} = require('./sizes.js');
+const {post_match, precedes_match} = require('./extract.js');
 
 
 const DEFAULT_INTL = 'US';
@@ -44,6 +44,15 @@ const read_subthreads = function(filename) {
     .filter(comment => !_.isNil(comment.replies))
     .value();
   return subthreads;
+};
+
+/**
+ * Determine if a shoe size is European.
+ * @param {number} size - Shoe size.
+ * @return {boolean}
+ */
+const is_EU = function(size) {
+  return size >= 39;
 };
 
 /**

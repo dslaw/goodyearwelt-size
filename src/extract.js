@@ -42,10 +42,6 @@ const match_intl_preceding = (line) => {
   return match_regex(line, pattern);
 };
 
-const is_EU = function(size) {
-  return size >= 39;
-};
-
 const collapse_spaces = function(string) {
   return string.replace(/\s+/g, ' ');
 };
@@ -99,7 +95,6 @@ const precedes_match = function(line) {
 
 
 module.exports = {
-  is_EU: is_EU,
   post_match: post_match,
   precedes_match: precedes_match,
 };
