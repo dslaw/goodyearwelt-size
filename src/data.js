@@ -6,6 +6,17 @@ const {Listing} = require('./posts.js');
 const DEFAULT_INTL = 'US';
 const DEFAULT_WIDTH = 'D';
 
+const PATTERNS = {
+  ampersand: /&(amp;){1,2}/ig,
+  gt: /&gt;/ig,
+  asterisk: /^\s*\**/,
+  plus: /^\s*\+*/,
+  parens: /\(.*\)/g,
+  unknown_last: /unknown last\s*$/i,
+  trailing_last: /last\s*$/i,
+  spaces: /\s+/g,
+};
+
 
 /**
  * Extract each subthread from the raw thread data, where a
@@ -108,6 +119,35 @@ const make_ready = function(obj) {
   });
 };
 
+const clean_manufacturer_last = function(obj) {
+  let mlast = obj.manufacturer_last;
+
+  const replaced = mlast.replace(PATTERNS.ampersand, '&');
+  const removed = _.reduce([
+      PATTERNS.gt,
+      PATTERNS.parens,
+      PATTERNS.asterisk,
+      PATTERNS.plus,
+      PATTERNS.unknown_last,
+      PATTERNS.trailing_last,
+    ],
+    (string, pattern) => string.replace(pattern, ''),
+    replaced
+  );
+
+  const cleaned = removed
+    .replace(PATTERNS.spaces, ' ')
+    .trim();
+
+  if (!cleaned) {
+    // TODO: write message
+    console.debug('message');
+    return null;
+  }
+
+  return _.merge({}, obj, {manufacturer_last: cleaned});
+};
+
 /**
  * Apply processing logic to each reply.
  * A reply is a line giving sizing information.
@@ -118,6 +158,8 @@ const process_replies = function(replies) {
   return _(replies)
     .filter(obj => !_.isNil(obj.text))
     .map(make_ready)
+    .filter()
+    .map(clean_manufacturer_last)
     .filter()
     .value();
 };
