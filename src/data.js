@@ -8,9 +8,6 @@ const DEFAULT_WIDTH = 'D';
 
 const PATTERNS = {
   ampersand: /&(amp;){1,2}/ig,
-  gt: /&gt;/ig,
-  asterisk: /^\s*\**/,
-  plus: /^\s*\+*/,
   parens: /\(.*\)/g,
   unknown_last: /unknown last\s*$/i,
   trailing_last: /last\s*$/i,
@@ -124,10 +121,7 @@ const clean_manufacturer_last = function(obj) {
 
   const replaced = mlast.replace(PATTERNS.ampersand, '&');
   const removed = _.reduce([
-      PATTERNS.gt,
       PATTERNS.parens,
-      PATTERNS.asterisk,
-      PATTERNS.plus,
       PATTERNS.unknown_last,
       PATTERNS.trailing_last,
     ],

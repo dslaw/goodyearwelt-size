@@ -102,28 +102,6 @@ describe('Clean manufacturer last', () => {
     assert.deepStrictEqual(out, expected);
   });
 
-  // TODO: Seems like an issue in cleaning the markdown. 
-  it('Should remove greater-than entity', () => {
-    const obj = {manufacturer_last: '&gt; why'};
-    const expected = {manufacturer_last: 'why'};
-    const out = clean_manufacturer_last(obj);
-    assert.deepStrictEqual(out, expected);
-  });
-
-  it('Should remove plus sign', () => {
-    const obj = {manufacturer_last: ' + plus'};
-    const expected = {manufacturer_last: 'plus'};
-    const out = clean_manufacturer_last(obj);
-    assert.deepStrictEqual(out, expected);
-  });
-
-  it('Should remove asterisk', () => {
-    const obj = {manufacturer_last: ' * asterisk'};
-    const expected = {manufacturer_last: 'asterisk'};
-    const out = clean_manufacturer_last(obj);
-    assert.deepStrictEqual(out, expected);
-  });
-
   it('Should collapse spaces', () => {
     const obj = {manufacturer_last: 'Crockett &    Jones 111'};
     const expected = {manufacturer_last: 'Crockett & Jones 111'};

@@ -6,9 +6,10 @@ const SIZE_PAIR_DELIM = ':';
 
 
 const strip_bold = (md) => md.replace(/\*\*/g, '');
-const strip_list = (md) => md.replace(/^\*\s+?/gm, '');
-const strip_dash = (md) => md.replace(/^-\s+?/gm, '');
-const strip_gt = (md) => md.replace(/^&gt;\s+?/gm, '');
+const strip_list = (md) => md.replace(/^\*/gm, '');
+const strip_dash = (md) => md.replace(/^-/gm, '');
+const strip_plus = (md) => md.replace(/^\+/gm, '');
+const strip_gt = (md) => md.replace(/^&gt;/gm, '');
 
 /**
  * Normalize markdown from a sizing comment.
@@ -22,7 +23,9 @@ const normalize_md = function(md) {
     .map(strip_bold)
     .map(strip_list)
     .map(strip_dash)
+    .map(strip_plus)
     .map(strip_gt)
+    .map((s) => s.trim())
     .value();
 };
 

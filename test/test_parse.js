@@ -8,6 +8,7 @@ const parse = rewire('../src/parse.js');
 const strip_bold = parse.__get__('strip_bold');
 const strip_list = parse.__get__('strip_list');
 const strip_dash = parse.__get__('strip_dash');
+const strip_plus = parse.__get__('strip_plus');
 const strip_gt = parse.__get__('strip_gt');
 const normalize_md = parse.__get__('normalize_md');
 const split_sizing_pair = parse.__get__('split_sizing_pair');
@@ -34,24 +35,32 @@ describe('Normalize markdown', () => {
   });
 
   it('Should remove unordered list markers', () => {
-    const markdown = '* First\n* Second\nText';
-    const expected = 'First\nSecond\nText';
+    const markdown = '* First\n* Second\n*Third\nText';
+    const expected = ' First\n Second\nThird\nText';
 
     const stripped = strip_list(markdown);
     assert.equal(stripped, expected);
   });
 
   it('Should remove dashes', () => {
-    const markdown = '- First\n- Second\nText';
-    const expected = 'First\nSecond\nText';
+    const markdown = '- First\n- Second\n-Third\nText';
+    const expected = ' First\n Second\nThird\nText';
 
     const stripped = strip_dash(markdown);
     assert.equal(stripped, expected);
   });
 
+  it('Should remove plus signs', () => {
+    const markdown = '+ First\n+ Second\n+Third\nText';
+    const expected = ' First\n Second\nThird\nText';
+
+    const stripped = strip_plus(markdown);
+    assert.equal(stripped, expected);
+  });
+
   it('Should remove greater-than HTML entities', () => {
-    const markdown = '&gt; First\n&gt; Second\nText';
-    const expected = 'First\nSecond\nText';
+    const markdown = '&gt; First\n&gt; Second\n&gt;Third\nText';
+    const expected = ' First\n Second\nThird\nText';
 
     const stripped = strip_gt(markdown);
     assert.equal(stripped, expected);
