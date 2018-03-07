@@ -116,6 +116,11 @@ const make_ready = function(obj) {
   });
 };
 
+/**
+ * Clean the manufacturer last text.
+ * @param  {Object} obj - A parsed sizing (line) comment.
+ * @return {Object} data - A sizing (line) comment.
+ */
 const clean_manufacturer_last = function(obj) {
   let mlast = obj.manufacturer_last;
 
@@ -134,8 +139,7 @@ const clean_manufacturer_last = function(obj) {
     .trim();
 
   if (!cleaned) {
-    // TODO: write message
-    console.debug('message');
+    console.debug(`Cleaning resulted in empty string for ${mlast}`);
     return null;
   }
 
