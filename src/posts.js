@@ -78,12 +78,13 @@ class BrannockSize {
       throw new Error;
     }
 
-    var [match, ...rest] = COMMENT_PATTERN.exec(md);
-    if (match == null) {
+    let match = COMMENT_PATTERN.exec(md);
+    if (match === null) {
       throw new Error;
     }
 
-    return this.fromString(match);
+    let [match_val, ...rest] = match;
+    return this.fromString(match_val);
   }
 }
 
