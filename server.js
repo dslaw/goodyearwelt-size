@@ -1,12 +1,22 @@
 const express = require('express');
+const path = require('path');
 const {SizingData} = require('./src/container.js');
 const app = express();
 
 
-const DATA_FILENAME = './src/data/last_sizing_thread.json';
-const PORT = 3030;
+const constants = {
+  port: 3030,
+  data_dir: './src/data',
+  filenames: [
+      'last_sizing_thread_2017.json',
+      'last_sizing_thread_2018.json',
+  ],
+};
 
-const sd = SizingData.from_file(DATA_FILENAME);
+const data_filenames = constants.filenames.map(fname => {
+  return path.join(constants.data_dir, fname);
+});
+const sd = SizingData.from_files(data_filenames);
 
 
 app.get('/', (req, res) => {
@@ -31,6 +41,6 @@ app.get('/sizes/:size', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Started listening on port ${PORT}`);
+app.listen(constants.port, () => {
+  console.log(`Started listening on port ${constants.port}`);
 });

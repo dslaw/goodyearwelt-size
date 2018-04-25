@@ -42,8 +42,13 @@ class SizingData {
   }
 
   static from_file(filename) {
-    let data = load_data(filename);
-    return new this(data);
+    return this.from_files([filename]);
+  }
+
+  static from_files(filenames) {
+    let data = _.map(filenames, load_data);
+    let flat = _.concat(...data);
+    return new this(flat);
   }
 
   get() {
