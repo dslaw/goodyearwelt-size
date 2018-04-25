@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require('express');
 const {SizingData} = require('./src/container.js');
 const app = express();
 

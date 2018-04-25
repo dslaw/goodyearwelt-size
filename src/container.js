@@ -14,7 +14,7 @@ const get_template = _.memoize(io.get_template);
  */
 const load_data = _.memoize((filename) => {
   let raw_thread = io.read_json(filename);
-  let subthreads = to_subthreads(raw_thread)
+  let subthreads = to_subthreads(raw_thread);
   let replies = unnest_subthreads(subthreads);
   return process_replies(replies);
 });
