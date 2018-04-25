@@ -2,7 +2,10 @@ const _ = require('lodash');
 
 
 const SIZE_PATTERN = /([0-9]{1,2}(\.5)?)/i;
-const COMMENT_PATTERN = new RegExp(`(${SIZE_PATTERN.source}([A-Z]{1,3}))`, 'i');
+const WIDTH_PATTERN = /Narrow|Wide|[A-Z]{1,3}/i;
+const COMMENT_PATTERN = new RegExp(`(${SIZE_PATTERN.source}\\s*(${WIDTH_PATTERN.source}))`, 'i');
+
+const WIDTH_ADJECTIVES = new Set(['NARROW', 'WIDE']);
 
 
 class Listing {
@@ -49,6 +52,13 @@ class BrannockSize {
   }
 
   toString() {
+    if (WIDTH_ADJECTIVES.has(this.width)) {
+      // Width is a word rather than a Brannock width,
+      // so a space should be inserted between the numeric
+      // size and the width, and be formatted nicely.
+      return `${this.size} ${_.capitalize(this.width)}`;
+    }
+
     return `${this.size}${this.width}`;
   }
 
@@ -60,7 +70,7 @@ class BrannockSize {
   static fromString(string) {
     let input_string = string.trim();
     let [match, ...rest] = SIZE_PATTERN.exec(input_string);
-    let width = input_string.replace(match, '');
+    let width = input_string.replace(match, '').trim();
     return new this(match, width);
   }
 

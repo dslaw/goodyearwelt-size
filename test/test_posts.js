@@ -125,6 +125,8 @@ describe('Modeled Brannock size', () => {
     {string: '8.5D', size: 8.5, width: 'D'},
     {string: '10D', size: 10, width: 'D'},
     {string: '10.5D', size: 10.5, width: 'D'},
+    {string: '10.5 Narrow', size: 10.5, width: 'NARROW'},
+    {string: '10.5 Wide', size: 10.5, width: 'WIDE'},
   ];
 
   string_expected.forEach(obj => {
@@ -135,26 +137,43 @@ describe('Modeled Brannock size', () => {
     });
   });
 
-  it('Should instantiate from a comment', () => {
-    const mock_comment = {
-      body: '##**Brannock:** 8.5D',
-      id: 'id123',
-    };
-    const bs = BrannockSize.from_comment(mock_comment);
-    assert.strictEqual(bs.size, 8.5);
-    assert.strictEqual(bs.width, 'D');
+  const comment_expected = [
+   {body: '##**Brannock:** 8.5D', id: 'id123', size: 8.5, width: 'D'},
+   {body: '#8.5D', id: 'id123', size: 8.5, width: 'D'},
+   {body: '#8.5 Narrow', id: 'id123', size: 8.5, width: 'NARROW'},
+   {body: '#8.5 Wide', id: 'id123', size: 8.5, width: 'WIDE'},
+  ];
+
+  comment_expected.forEach(obj => {
+    it(`Should instantiate from comment '${obj.body}'`, () => {
+      const bs = BrannockSize.from_comment(obj);
+      assert.strictEqual(bs.size, obj.size);
+      assert.strictEqual(bs.width, obj.width);
+    });
   });
 
-  it('Should cast to string', () => {
-    const expected = '8.5D';
-    const bs = new BrannockSize('8.5', 'd');
-    assert.strictEqual(bs.toString(), expected);
+  const brannocksize_expected = [
+    {string: '8D', brannock: new BrannockSize('8', 'D')},
+    {string: '8.5D', brannock: new BrannockSize('8.5', 'D')},
+    {string: '10D', brannock: new BrannockSize('10', 'D')},
+    {string: '10.5D', brannock: new BrannockSize('10.5', 'D')},
+    {string: '10.5 Narrow', brannock: new BrannockSize('10.5', 'NARROW')},
+    {string: '10.5 Wide', brannock: new BrannockSize('10.5', 'WIDE')},
+  ];
+
+  brannocksize_expected.forEach(obj => {
+    it('Should cast to string', () => {
+      const bs = obj.brannock;
+      assert.strictEqual(bs.toString(), obj.string);
+    });
   });
 
-  it('Should instantiate from the result of a string cast', () => {
-    const bs = new BrannockSize('8.5', 'd');
-    const out = BrannockSize.fromString(bs.toString());
-    assert.strictEqual(bs.size, out.size);
-    assert.strictEqual(bs.width, out.width);
+  brannocksize_expected.forEach(obj => {
+    it('Should instantiate from the result of a string cast', () => {
+      const bs = obj.brannock;
+      const out = BrannockSize.fromString(bs.toString());
+      assert.strictEqual(bs.size, out.size);
+      assert.strictEqual(bs.width, out.width);
+    });
   });
 });
