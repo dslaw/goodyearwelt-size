@@ -1,15 +1,10 @@
 const _ = require('lodash');
+const removeMd = require('remove-markdown');
 const {BrannockSize} = require('./posts.js');
 
 
 const SIZE_PAIR_DELIM = ':';
 
-
-const strip_bold = (md) => md.replace(/\*\*/g, '');
-const strip_list = (md) => md.replace(/^\*/gm, '');
-const strip_dash = (md) => md.replace(/^-/gm, '');
-const strip_plus = (md) => md.replace(/^\+/gm, '');
-const strip_gt = (md) => md.replace(/^&gt;/gm, '');
 
 /**
  * Normalize markdown from a sizing comment.
@@ -17,14 +12,16 @@ const strip_gt = (md) => md.replace(/^&gt;/gm, '');
  * @return {Array[string]} normalized - Normalized lines.
  */
 const normalize_md = function(md) {
-  let lines = md.split('\n');
+  let text = _.unescape(md);
+  let lines = removeMd(text).split('\n');
   return _(lines)
     .filter()
-    .map(strip_bold)
-    .map(strip_list)
-    .map(strip_dash)
-    .map(strip_plus)
-    .map(strip_gt)
+    // Strip lead symbol from unordered list items that
+    // don't have a space between the symbol and the text.
+    // These lines won't be caught by `removeMd` as they
+    // are improperly formatted, but are not a rare sight
+    // on Reddit.
+    .map((s) => s.replace(/^[-+*>]/g, ''))
     .map((s) => s.trim())
     .value();
 };
