@@ -80,9 +80,6 @@ class BrannockSize {
    * @param {BrannockSize} size - Modeled Brannock size.
    */
   static from_comment(comment) {
-    // NB: The HTML representation of a comment (`body_html`) contains HTML
-    //     entities rather than characters, which parse5 doesn't handle.
-    //     So the markdown representation (`body`) is used, instead.
     let md = comment.body;
     if (md === undefined) {
       throw new Error;
