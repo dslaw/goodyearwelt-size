@@ -10,7 +10,7 @@ const WIDTH_ADJECTIVES = new Set(['NARROW', 'WIDE']);
 
 class Listing {
   constructor(object) {
-    if (object.kind != 'Listing') {
+    if (object.kind !== 'Listing') {
       throw new Error(`Expected 'Listing', got ${object.kind} instead`);
     }
 
@@ -24,7 +24,7 @@ class Listing {
 
 class Comment {
   constructor(object) {
-    if (object.kind != 't1' && object.kind != 't3') {
+    if (object.kind !== 't1' && object.kind !== 't3') {
       throw new Error(`Expected 't1' or 't3', got ${object.kind} instead`);
     }
 
