@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const {post_match, precedes_match} = require('./extract.js');
-const {Listing} = require('./posts.js');
 
 
 const DEFAULT_INTL = 'US';
@@ -14,27 +13,6 @@ const PATTERNS = {
   spaces: /\s+/g,
 };
 
-
-/**
- * Extract each subthread from the raw thread data, where a
- * subthread is a top-level comment with it's own replies.
- * @param {Object} raw_thread - The thread, deserialized JSON.
- * @return {Array[Listing]} subthreads
- */
-const to_subthreads = function(raw_thread) {
-  let [op, main_thread] = _.map(raw_thread, listing => new Listing(listing));
-  let comments = main_thread.children;
-  let thread_author = _.first(op.children).author; 
-
-  // Top level comments (with replies) in the thread.
-  // Each top level comment should start a subthread per
-  // Brannock size.
-  let subthreads = _(comments)
-    .filter(comment => comment.author === thread_author)
-    .filter(comment => !_.isNil(comment.replies))
-    .value();
-  return subthreads;
-};
 
 /**
  * Determine if a shoe size is European.
@@ -165,5 +143,4 @@ const process_replies = function(replies) {
 
 module.exports = {
   process_replies: process_replies,
-  to_subthreads: to_subthreads,
 };

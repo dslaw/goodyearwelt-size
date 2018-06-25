@@ -95,9 +95,31 @@ class BrannockSize {
   }
 }
 
+/**
+ * Extract each subthread from the raw thread data, where a
+ * subthread is a top-level comment with it's own replies.
+ * @param {Object} raw_thread - The thread, deserialized JSON.
+ * @return {Array[Listing]} subthreads
+ */
+const to_subthreads = function(raw_thread) {
+  let [op, main_thread] = _.map(raw_thread, listing => new Listing(listing));
+  let comments = main_thread.children;
+  let thread_author = _.first(op.children).author; 
+
+  // Top level comments (with replies) in the thread.
+  // Each top level comment should start a subthread per
+  // Brannock size.
+  let subthreads = _(comments)
+    .filter(comment => comment.author === thread_author)
+    .filter(comment => !_.isNil(comment.replies))
+    .value();
+  return subthreads;
+};
+
 
 module.exports = {
   BrannockSize: BrannockSize,
   Comment: Comment,
   Listing: Listing,
+  to_subthreads: to_subthreads,
 };

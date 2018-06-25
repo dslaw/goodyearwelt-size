@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const io = require('./io.js');
-const {process_replies, to_subthreads} = require('./data.js');
-const {BrannockSize} = require('./posts.js');
+const {process_replies} = require('./data.js');
+const {BrannockSize, to_subthreads} = require('./posts.js');
 const {unnest_subthreads} = require('./parse.js');
 
 
