@@ -38,10 +38,10 @@ class Comment {
     // t3 posts use `selftext`, while t3 uses `body` for
     // markdown and `body_html` for html..
     this.body = object.data.selftext || object.data.body || null;
-    this.created_utc = object.data.created_utc;
+    this.createdUtc = object.data.created_utc;
     this.id = object.data.id;
     this.kind = object.kind;
-    this.parent_id = object.data.parent_id || null;
+    this.parentId = object.data.parent_id || null;
   }
 }
 
@@ -68,9 +68,9 @@ class BrannockSize {
    * @return {BrannockSize} size - Modeled Brannock size.
    */
   static fromString(string) {
-    let input_string = string.trim();
-    let [match, ...rest] = SIZE_PATTERN.exec(input_string);
-    let width = input_string.replace(match, '').trim();
+    const inputString = string.trim();
+    const [ match, ...rest ] = SIZE_PATTERN.exec(inputString);
+    const width = inputString.replace(match, '').trim();
     return new this(match, width);
   }
 
@@ -79,19 +79,19 @@ class BrannockSize {
    * @param {Comment} comment - Comment specifying a Brannock size.
    * @param {BrannockSize} size - Modeled Brannock size.
    */
-  static from_comment(comment) {
-    let md = comment.body;
-    if (md === undefined) {
+  static fromComment(comment) {
+    const md = comment.body;
+    if (_.isNil(md)) {
       throw new Error;
     }
 
     let match = COMMENT_PATTERN.exec(md);
-    if (match === null) {
+    if (_.isNil(match)) {
       throw new Error;
     }
 
-    let [match_val, ...rest] = match;
-    return this.fromString(match_val);
+    let [ matchVal, ...rest ] = match;
+    return this.fromString(matchVal);
   }
 }
 
@@ -101,25 +101,23 @@ class BrannockSize {
  * @param {Object} raw_thread - The thread, deserialized JSON.
  * @return {Array[Listing]} subthreads
  */
-const to_subthreads = function(raw_thread) {
-  let [op, main_thread] = _.map(raw_thread, listing => new Listing(listing));
-  let comments = main_thread.children;
-  let thread_author = _.first(op.children).author; 
+const toSubthreads = function(rawThread) {
+  const [ op, mainThread ] = rawThread.map(listing => new Listing(listing));
+  const comments = mainThread.children;
+  const threadAuthor = _.first(op.children).author;
 
   // Top level comments (with replies) in the thread.
   // Each top level comment should start a subthread per
   // Brannock size.
-  let subthreads = _(comments)
-    .filter(comment => comment.author === thread_author)
-    .filter(comment => !_.isNil(comment.replies))
-    .value();
-  return subthreads;
+  return comments
+    .filter(comment => comment.author === threadAuthor)
+    .filter(comment => !_.isNil(comment.replies));
 };
 
 
 module.exports = {
-  BrannockSize: BrannockSize,
-  Comment: Comment,
-  Listing: Listing,
-  to_subthreads: to_subthreads,
+  BrannockSize,
+  Comment,
+  Listing,
+  toSubthreads,
 };

@@ -1,9 +1,9 @@
 const assert = require('assert');
-const {cloneDeep} = require('lodash');
-const {BrannockSize, Comment, Listing} = require('../src/posts.js');
+const { cloneDeep } = require('lodash');
+const { BrannockSize, Comment, Listing } = require('../src/posts.js');
 
 
-const t1_comment = {
+const t1Comment = {
   kind: 't1',
   data: {
     author: 't1_author',
@@ -15,7 +15,7 @@ const t1_comment = {
   },
 };
 
-const t3_comment = {
+const t3Comment = {
   kind: 't3',
   data: {
     author: 't3_author',
@@ -41,7 +41,7 @@ const listing = {
 
 describe('Modeled Reddit comment', () => {
   it('Should throw error for unsupported comment kind', () => {
-    const invalid = {kind: 't2', data: {}};
+    const invalid = { kind: 't2', data: {} };
     assert.throws(
       () => {
         new Comment(invalid);
@@ -50,47 +50,47 @@ describe('Modeled Reddit comment', () => {
   });
 
   it('Should handle a t1 comment', () => {
-    const comment = new Comment(t1_comment);
+    const comment = new Comment(t1Comment);
 
     assert.strictEqual(comment.replies, null);
     assert.strictEqual(comment.author, 't1_author');
     assert.strictEqual(comment.body, 'Some **markdown**');
-    assert.strictEqual(comment.created_utc, 100);
+    assert.strictEqual(comment.createdUtc, 100);
     assert.strictEqual(comment.id, 'dd01f9');
     assert.strictEqual(comment.kind, 't1');
-    assert.strictEqual(comment.parent_id, 't3_5ibtzh');
+    assert.strictEqual(comment.parentId, 't3_5ibtzh');
   });
 
   it('Should handle a t3 comment', () => {
-    const comment = new Comment(t3_comment);
+    const comment = new Comment(t3Comment);
 
     assert.strictEqual(comment.replies, null);
     assert.strictEqual(comment.author, 't3_author');
     assert.strictEqual(comment.body, 'Some **markdown**');
-    assert.strictEqual(comment.created_utc, 100);
+    assert.strictEqual(comment.createdUtc, 100);
     assert.strictEqual(comment.id, 'dd01f9');
     assert.strictEqual(comment.kind, 't3');
-    assert.strictEqual(comment.parent_id, 't3_5ibtzh');
+    assert.strictEqual(comment.parentId, 't3_5ibtzh');
   });
 
   it('Should create a listing of replies', () => {
-    let comment_obj = cloneDeep(t1_comment);
-    comment_obj.data.replies = listing;
-    const comment = new Comment(comment_obj);
+    let commentObj = cloneDeep(t1Comment);
+    commentObj.data.replies = listing;
+    const comment = new Comment(commentObj);
 
     assert.strictEqual(comment.replies.kind, 'Listing');
   });
 });
 
 describe('Modeled Reddit listing', () => {
-  const assert_empty_array = (arr) => {
-    assert.ok(arr instanceof Array && arr.length == 0);
+  const assertEmptyArray = (arr) => {
+    assert.ok(arr instanceof Array && arr.length === 0);
   };
 
   it('Should throw an error for non Listing', () => {
     assert.throws(
       () => {
-        new Listing(t1_comment);
+        new Listing(t1Comment);
       }
     );
   });
@@ -99,14 +99,14 @@ describe('Modeled Reddit listing', () => {
     const lst = new Listing(listing);
 
     assert.strictEqual(lst.kind, 'Listing');
-    assert_empty_array(lst.children);
+    assertEmptyArray(lst.children);
     assert.strictEqual(lst.modhash, 'modhash');
   });
 
   it('Should create array of comments', () => {
-    let listing_obj = cloneDeep(listing);
-    listing_obj.data.children = [t1_comment];
-    const lst = new Listing(listing_obj);
+    let listingObj = cloneDeep(listing);
+    listingObj.data.children = [t1Comment];
+    const lst = new Listing(listingObj);
 
     assert.ok(lst.children instanceof Array);
     assert.equal(lst.children.length, 1);
@@ -121,12 +121,12 @@ describe('Modeled Brannock size', () => {
   });
 
   const string_expected = [
-    {string: '8D', size: 8, width: 'D'},
-    {string: '8.5D', size: 8.5, width: 'D'},
-    {string: '10D', size: 10, width: 'D'},
-    {string: '10.5D', size: 10.5, width: 'D'},
-    {string: '10.5 Narrow', size: 10.5, width: 'NARROW'},
-    {string: '10.5 Wide', size: 10.5, width: 'WIDE'},
+    { string: '8D', size: 8, width: 'D' },
+    { string: '8.5D', size: 8.5, width: 'D' },
+    { string: '10D', size: 10, width: 'D' },
+    { string: '10.5D', size: 10.5, width: 'D' },
+    { string: '10.5 Narrow', size: 10.5, width: 'NARROW' },
+    { string: '10.5 Wide', size: 10.5, width: 'WIDE' },
   ];
 
   string_expected.forEach(obj => {
@@ -138,27 +138,27 @@ describe('Modeled Brannock size', () => {
   });
 
   const comment_expected = [
-   {body: '##**Brannock:** 8.5D', id: 'id123', size: 8.5, width: 'D'},
-   {body: '#8.5D', id: 'id123', size: 8.5, width: 'D'},
-   {body: '#8.5 Narrow', id: 'id123', size: 8.5, width: 'NARROW'},
-   {body: '#8.5 Wide', id: 'id123', size: 8.5, width: 'WIDE'},
+   { body: '##**Brannock:** 8.5D', id: 'id123', size: 8.5, width: 'D' },
+   { body: '#8.5D', id: 'id123', size: 8.5, width: 'D' },
+   { body: '#8.5 Narrow', id: 'id123', size: 8.5, width: 'NARROW' },
+   { body: '#8.5 Wide', id: 'id123', size: 8.5, width: 'WIDE' },
   ];
 
   comment_expected.forEach(obj => {
     it(`Should instantiate from comment '${obj.body}'`, () => {
-      const bs = BrannockSize.from_comment(obj);
+      const bs = BrannockSize.fromComment(obj);
       assert.strictEqual(bs.size, obj.size);
       assert.strictEqual(bs.width, obj.width);
     });
   });
 
   const brannocksize_expected = [
-    {string: '8D', brannock: new BrannockSize('8', 'D')},
-    {string: '8.5D', brannock: new BrannockSize('8.5', 'D')},
-    {string: '10D', brannock: new BrannockSize('10', 'D')},
-    {string: '10.5D', brannock: new BrannockSize('10.5', 'D')},
-    {string: '10.5 Narrow', brannock: new BrannockSize('10.5', 'NARROW')},
-    {string: '10.5 Wide', brannock: new BrannockSize('10.5', 'WIDE')},
+    { string: '8D', brannock: new BrannockSize('8', 'D') },
+    { string: '8.5D', brannock: new BrannockSize('8.5', 'D') },
+    { string: '10D', brannock: new BrannockSize('10', 'D') },
+    { string: '10.5D', brannock: new BrannockSize('10.5', 'D') },
+    { string: '10.5 Narrow', brannock: new BrannockSize('10.5', 'NARROW') },
+    { string: '10.5 Wide', brannock: new BrannockSize('10.5', 'WIDE') },
   ];
 
   brannocksize_expected.forEach(obj => {
