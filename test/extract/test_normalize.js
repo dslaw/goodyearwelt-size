@@ -1,6 +1,6 @@
 const assert = require('assert');
 const rewire = require('rewire');
-const {normalize_md, split_sizing_pair} = rewire('../../src/extract/clean.js');
+const { normalizeMd, splitSizingPair } = rewire('../../src/extract/normalize.js');
 
 
 describe('Normalize markdown', () => {
@@ -12,7 +12,7 @@ describe('Normalize markdown', () => {
       'Normal',
     ];
 
-    const stripped = normalize_md(markdown);
+    const stripped = normalizeMd(markdown);
     assert.deepStrictEqual(stripped, expected);
   });
 
@@ -20,7 +20,7 @@ describe('Normalize markdown', () => {
     const markdown = '* First\n* Second\n*Third\nText';
     const expected = ['First', 'Second', 'Third', 'Text'];
 
-    const stripped = normalize_md(markdown);
+    const stripped = normalizeMd(markdown);
     assert.deepStrictEqual(stripped, expected);
   });
 
@@ -28,7 +28,7 @@ describe('Normalize markdown', () => {
     const markdown = '- First\n- Second\n-Third\nText';
     const expected = ['First', 'Second', 'Third', 'Text'];
 
-    const stripped = normalize_md(markdown);
+    const stripped = normalizeMd(markdown);
     assert.deepStrictEqual(stripped, expected);
   });
 
@@ -36,7 +36,7 @@ describe('Normalize markdown', () => {
     const markdown = '+ First\n+ Second\n+Third\nText';
     const expected = ['First', 'Second', 'Third', 'Text'];
 
-    const stripped = normalize_md(markdown);
+    const stripped = normalizeMd(markdown);
     assert.deepStrictEqual(stripped, expected);
   });
 
@@ -44,7 +44,7 @@ describe('Normalize markdown', () => {
     const markdown = '&gt; First\n&gt; Second\n&gt;Third\nText';
     const expected = ['First', 'Second', 'Third', 'Text'];
 
-    const stripped = normalize_md(markdown);
+    const stripped = normalizeMd(markdown);
     assert.deepStrictEqual(stripped, expected);
   });
 
@@ -67,7 +67,7 @@ describe('Normalize markdown', () => {
       'Last line.',
     ];
 
-    const normalized = normalize_md(markdown);
+    const normalized = normalizeMd(markdown);
     assert.deepStrictEqual(normalized, expected);
   });
 });
@@ -75,25 +75,25 @@ describe('Normalize markdown', () => {
 describe('Split sizing pair', () => {
   it('Should return null if no colons found', () => {
     const line = 'Some regular text.';
-    const pair = split_sizing_pair(line);
+    const pair = splitSizingPair(line);
     assert.strictEqual(pair, null);
   });
 
   it('Should return null if more than two colons found', () => {
     const line = 'why:would:this:exist?';
-    const pair = split_sizing_pair(line);
+    const pair = splitSizingPair(line);
     assert.strictEqual(pair, null);
   });
 
   it('Should return null for notes', () => {
     const line = 'Notes: notes about things.';
-    const pair = split_sizing_pair(line);
+    const pair = splitSizingPair(line);
     assert.strictEqual(pair, null);
   });
 
   it('Should return null for unexpected notes', () => {
     const line = 'Brannock/Notes: notes about things.';
-    const pair = split_sizing_pair(line);
+    const pair = splitSizingPair(line);
     assert.strictEqual(pair, null);
   });
 
@@ -102,22 +102,22 @@ describe('Split sizing pair', () => {
 
     // No leading space.
     var line = 'Manufacturer Last: 11D, additional notes.';
-    var pair = split_sizing_pair(line);
+    var pair = splitSizingPair(line);
     assert.deepEqual(pair, expected);
 
     // Leading space.
     line = 'Manufacturer Last : 11D, additional notes.';
-    pair = split_sizing_pair(line);
+    pair = splitSizingPair(line);
     assert.deepEqual(pair, expected);
 
     // Leading space, no trailing space.
     line = 'Manufacturer Last :11D, additional notes.';
-    pair = split_sizing_pair(line);
+    pair = splitSizingPair(line);
     assert.deepEqual(pair, expected);
 
     // No spaces.
     line = 'Manufacturer Last:11D, additional notes.';
-    pair = split_sizing_pair(line);
+    pair = splitSizingPair(line);
     assert.deepEqual(pair, expected);
   });
 });

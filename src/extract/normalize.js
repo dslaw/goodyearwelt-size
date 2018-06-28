@@ -10,19 +10,19 @@ const SIZE_PAIR_DELIM = ':';
  * @param {string} md - The markdown snippet to normalize.
  * @return {Array[string]} normalized - Normalized lines.
  */
-const normalize_md = function(md) {
-  let text = _.unescape(md);
-  let lines = removeMd(text).split('\n');
-  return _(lines)
-    .filter()
+const normalizeMd = function(md) {
+  const text = _.unescape(md);
+  const stripped = removeMd(text);
+  return text
+    .split('\n')
+    .filter(line => line.length)
     // Strip lead symbol from unordered list items that
     // don't have a space between the symbol and the text.
     // These lines won't be caught by `removeMd` as they
     // are improperly formatted, but are not a rare sight
     // on Reddit.
-    .map((s) => s.replace(/^[-+*>]/g, ''))
-    .map((s) => s.trim())
-    .value();
+    .map(line => line.replace(/^[-+*>]/g, ''))
+    .map(line => line.trim());
 };
 
 
@@ -32,14 +32,14 @@ const normalize_md = function(md) {
  * @return {[string, string]} pair - The shoe-last and sizing-text
  * pair. Null if the line does not contain a sizing pair.
  */
-const split_sizing_pair = function(line) {
-  let parts = _.map(line.split(SIZE_PAIR_DELIM),  _.trim);
-  if (parts.length != 2) {
+const splitSizingPair = function(line) {
+  const parts = line.split(SIZE_PAIR_DELIM).map(_.trim);
+  if (parts.length !== 2) {
     return null;
   }
 
   // Check if line is for notes, rather than specific size information.
-  let [lhs, ,] = parts;
+  const [ lhs, , ] = parts;
   if (lhs.toLowerCase().includes('note')) {
     console.debug(`Encountered 'note' in manufacturer last '${line}'`);
     return null;
@@ -50,6 +50,6 @@ const split_sizing_pair = function(line) {
 
 
 module.exports = {
-  normalize_md,
-  split_sizing_pair,
+  normalizeMd,
+  splitSizingPair,
 };

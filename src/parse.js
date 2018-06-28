@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {normalize_md, split_sizing_pair} = require('./extract/clean.js');
+const {normalizeMd, splitSizingPair} = require('./extract/normalize.js');
 const {BrannockSize} = require('./posts.js');
 
 
@@ -10,7 +10,7 @@ const {BrannockSize} = require('./posts.js');
  */
 const parse_comment = function(lines) {
   let pairs = _(lines)
-    .map(split_sizing_pair)
+    .map(splitSizingPair)
     .compact()
     .value();
   return pairs;
@@ -25,7 +25,7 @@ const parse_comments = function(comments) {
   return _(comments)
     .map(comment => comment.body)
     .compact()
-    .map(normalize_md)
+    .map(normalizeMd)
     .map(parse_comment)
     .value();
 };
@@ -77,6 +77,7 @@ const unnest_subthread = function(subthread_comment) {
  */
 const unnest_subthreads = function(subthreads) {
   return _(subthreads)
+    // TODO: replace all with just `flatMap`
     .map(unnest_subthread)
     .flatten()
     .compact()
