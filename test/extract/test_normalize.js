@@ -1,6 +1,6 @@
 const assert = require('assert');
 const rewire = require('rewire');
-const { normalizeMd, splitSizingPair } = rewire('../../src/extract/normalize.js');
+const { normalizeMd, splitSizingPair } = require('../../src/extract/normalize.js');
 
 
 describe('Normalize markdown', () => {
