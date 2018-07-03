@@ -22,6 +22,6 @@
   },
   "devDependencies": {
     "mocha": "4.0.x",
-    "rewire": "3.0.x"
+    "rewire": "4.0.x"
   }
 }
