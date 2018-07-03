@@ -13,7 +13,7 @@ const SIZE_PAIR_DELIM = ':';
 const normalizeMd = function(md) {
   const text = _.unescape(md);
   const stripped = removeMd(text);
-  return text
+  return stripped
     .split('\n')
     .filter(line => line.length)
     // Strip lead symbol from unordered list items that
