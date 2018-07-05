@@ -1,10 +1,10 @@
 const assert = require('assert');
 const rewire = require('rewire');
-const extract = rewire('../src/extract.js');
+const match = rewire('../src/match.js');
 
 // Private functions.
-const collapse_spaces = extract.__get__('collapse_spaces');
-const match_regex = extract.__get__('match_regex');
+const collapse_spaces = match.__get__('collapse_spaces');
+const match_regex = match.__get__('match_regex');
 
 
 describe('Match regular expression', () => {
@@ -139,7 +139,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = extract.post_match(obj.line);
+      const out = match.post_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -151,7 +151,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = extract.post_match(obj.line + notes);
+      const out = match.post_match(obj.line + notes);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -197,7 +197,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = extract.precedes_match(obj.line);
+      const out = match.precedes_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -209,7 +209,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = extract.precedes_match(obj.line + notes);
+      const out = match.precedes_match(obj.line + notes);
       assert.deepStrictEqual(out, expected);
     });
   });
@@ -227,7 +227,7 @@ describe('Match specific patterns', () => {
         width: obj.width,
         intl: obj.intl,
       };
-      const out = extract.post_match(obj.line);
+      const out = match.post_match(obj.line);
       assert.deepStrictEqual(out, expected);
     });
   });

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {post_match, precedes_match} = require('./extract.js');
+const {post_match, precedes_match} = require('./match.js');
 
 
 const DEFAULT_INTL = 'US';
