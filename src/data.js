@@ -15,12 +15,14 @@ const PATTERNS = {
 
 
 /**
- * Determine if a shoe size is European.
+ * Determine if a shoe size is continental European.
  * @param {number} size - Shoe size.
  * @return {boolean}
  */
 const is_EU = function(size) {
-  return size >= 39;
+  // 33.5 is the smallest listed size in the Adults' shoe sizes
+  // table given here: https://en.wikipedia.org/wiki/Shoe_size#Shoe_sizing
+  return size >= 33.5;
 };
 
 /**
