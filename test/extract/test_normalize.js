@@ -1,6 +1,6 @@
 const assert = require('assert');
 const rewire = require('rewire');
-const { normalizeMd, splitSizingPair } = require('../../src/extract/normalize.js');
+const { getSizePairs, normalizeMd, splitSizingPair } = require('../../src/extract/normalize.js');
 
 
 describe('Normalize markdown', () => {
@@ -119,5 +119,39 @@ describe('Split sizing pair', () => {
     line = 'Manufacturer Last:11D, additional notes.';
     pair = splitSizingPair(line);
     assert.deepEqual(pair, expected);
+  });
+});
+
+describe('Get size pairs from comment body', () => {
+  it('Should get sizing information pairs', () => {
+    const markdown = [
+      'Note: This is a note with additional information.',
+      '',
+      '* Red Wing: 10D',
+      '* Alden: 9.5D',
+      '* Another: 10D',
+    ].join('\n');
+
+    const expected = [
+      ['Red Wing', '10D'],
+      ['Alden', '9.5D'],
+      ['Another', '10D'],
+    ];
+
+    const out = getSizePairs(markdown);
+    assert.deepStrictEqual(out, expected);
+  });
+
+  it('Should remove bullets without sizing information', () => {
+    const markdown = [
+      '* Red Wing: 10D',
+      '* Stray bullet',
+      '* Alden: 9.5D',
+    ].join('\n');
+
+    const expectedNum = 2;
+
+    const out = getSizePairs(markdown);
+    assert.strictEqual(out.length, expectedNum);
   });
 });

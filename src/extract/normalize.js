@@ -49,7 +49,21 @@ const splitSizingPair = function(line) {
 };
 
 
+/**
+ * Get lines likely to contain sizing information, split into
+ * shoe-last and sizing-text components.
+ * @param {string} markdown - Comment body, as markdown.
+ * @return {Array} pairs - Shoe-last and sizing-text pairs.
+ */
+const getSizePairs = function(markdown) {
+  const lines = normalizeMd(markdown);
+  const pairs = lines.map(splitSizingPair);
+  return _.compact(pairs);
+};
+
+
 module.exports = {
+  getSizePairs,
   normalizeMd,
   splitSizingPair,
 };
