@@ -2,12 +2,12 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 
 
-const read_file = function(filename) {
+const readFile = function(filename) {
   return fs.readFileSync(filename, 'utf-8').toString();
 };
 
-const read_json = function(filename) {
-  return JSON.parse(read_file(filename));
+const readJSON = function(filename) {
+  return JSON.parse(readFile(filename));
 };
 
 /**
@@ -15,14 +15,14 @@ const read_json = function(filename) {
  * @param {string} filename - Name of HTML template.
  * @return {function} compiled - Compiled handlebars template.
  */
-const get_template = function(filename) {
-  let template = read_file(filename);
+const getTemplate = function(filename) {
+  const template = readFile(filename);
   return handlebars.compile(template);
 };
 
 
 module.exports = {
-  get_template: get_template,
-  read_file: read_file,
-  read_json: read_json,
+  getTemplate,
+  readFile,
+  readJSON,
 };
