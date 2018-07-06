@@ -1,6 +1,6 @@
 const assert = require('assert');
 const rewire = require('rewire');
-const match = rewire('../src/match.js');
+const match = rewire('../../src/extract/match.js');
 
 // Private functions.
 const collapseSpaces = match.__get__('collapseSpaces');
