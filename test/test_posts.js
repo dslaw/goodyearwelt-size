@@ -120,7 +120,7 @@ describe('Modeled Brannock size', () => {
     assert.strictEqual(bs.width, 'D');
   });
 
-  const string_expected = [
+  const stringExpected = [
     { string: '8D', size: 8, width: 'D' },
     { string: '8.5D', size: 8.5, width: 'D' },
     { string: '10D', size: 10, width: 'D' },
@@ -129,7 +129,7 @@ describe('Modeled Brannock size', () => {
     { string: '10.5 Wide', size: 10.5, width: 'WIDE' },
   ];
 
-  string_expected.forEach(obj => {
+  stringExpected.forEach(obj => {
     it(`Should instantiate string '${obj.string}'`, () => {
       const bs = BrannockSize.fromString(obj.string);
       assert.strictEqual(bs.size, obj.size);
@@ -137,14 +137,14 @@ describe('Modeled Brannock size', () => {
     });
   });
 
-  const comment_expected = [
+  const commentExpected = [
    { body: '##**Brannock:** 8.5D', id: 'id123', size: 8.5, width: 'D' },
    { body: '#8.5D', id: 'id123', size: 8.5, width: 'D' },
    { body: '#8.5 Narrow', id: 'id123', size: 8.5, width: 'NARROW' },
    { body: '#8.5 Wide', id: 'id123', size: 8.5, width: 'WIDE' },
   ];
 
-  comment_expected.forEach(obj => {
+  commentExpected.forEach(obj => {
     it(`Should instantiate from comment '${obj.body}'`, () => {
       const bs = BrannockSize.fromComment(obj);
       assert.strictEqual(bs.size, obj.size);
@@ -152,7 +152,7 @@ describe('Modeled Brannock size', () => {
     });
   });
 
-  const brannocksize_expected = [
+  const brannocksizeExpected = [
     { string: '8D', brannock: new BrannockSize('8', 'D') },
     { string: '8.5D', brannock: new BrannockSize('8.5', 'D') },
     { string: '10D', brannock: new BrannockSize('10', 'D') },
@@ -161,14 +161,14 @@ describe('Modeled Brannock size', () => {
     { string: '10.5 Wide', brannock: new BrannockSize('10.5', 'WIDE') },
   ];
 
-  brannocksize_expected.forEach(obj => {
+  brannocksizeExpected.forEach(obj => {
     it('Should cast to string', () => {
       const bs = obj.brannock;
       assert.strictEqual(bs.toString(), obj.string);
     });
   });
 
-  brannocksize_expected.forEach(obj => {
+  brannocksizeExpected.forEach(obj => {
     it('Should instantiate from the result of a string cast', () => {
       const bs = obj.brannock;
       const out = BrannockSize.fromString(bs.toString());
