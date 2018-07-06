@@ -96,12 +96,11 @@ class BrannockSize {
 }
 
 /**
- * Extract each subthread from the raw thread data, where a
- * subthread is a top-level comment with it's own replies.
+ * Extract each size thread from the raw thread data.
  * @param {Object} raw_thread - The thread, deserialized JSON.
  * @return {Array[Listing]} subthreads
  */
-const toSubthreads = function(rawThread) {
+const getSizeThreads = function(rawThread) {
   const [ op, mainThread ] = rawThread.map(listing => new Listing(listing));
   const comments = mainThread.children;
   const threadAuthor = _.first(op.children).author;
@@ -119,5 +118,5 @@ module.exports = {
   BrannockSize,
   Comment,
   Listing,
-  toSubthreads,
+  getSizeThreads,
 };
