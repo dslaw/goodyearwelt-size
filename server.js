@@ -8,6 +8,7 @@ const app = express();
 const constants = {
   port: 3030,
   dataDir: './src/data',
+  templatesDir: './templates',
   filenames: [
       'last_sizing_thread_2017.json',
       'last_sizing_thread_2018.json',
@@ -22,7 +23,8 @@ const getTemplate = memoize(io.getTemplate);
 
 
 app.get('/', (req, res) => {
-  const renderer = getTemplate('./templates/index.html');
+  const templateFilename = path.join(constants.templatesDir, 'index.html');
+  const renderer = getTemplate(templateFilename);
   const html = renderer(dataStore);
   res.send(html);
 });
@@ -36,7 +38,11 @@ app.get('/sizes/:size', (req, res) => {
   const data = dataStore.getSize(req.params.size);
   res.format({
     'default': () => {
-      const renderer = getTemplate('./templates/table_rows.html');
+      const templateFilename = path.join(
+        constants.templatesDir,
+        'table_rows.html'
+      );
+      const renderer = getTemplate(templateFilename);
       const html = renderer({ data });
       res.send(html);
     },
