@@ -23,14 +23,14 @@ const addThreadMetadata = function(op, sizeRecords) {
  * @param {string} filename - The name of the file to read.
  * @return {Array[Object]} sizeRecords
  */
-const loadData = _.memoize(filename => {
+const loadData = function(filename) {
   const rawThread = io.readJSON(filename);
   const { op, comments } = splitThread(rawThread);
   const sizeThreads = getSizeThreads(op, comments);
   const sizeRecords = _.flatMap(sizeThreads, extractSizeRecords);
   const processed = sizeRecords.map(processSizeRecord).filter(notNil);
   return addThreadMetadata(op, processed);
-});
+};
 
 /**
  * Sort Brannock sizes.
