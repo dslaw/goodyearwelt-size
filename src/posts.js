@@ -14,9 +14,7 @@ class Listing {
       throw new Error(`Expected 'Listing', got ${object.kind} instead`);
     }
 
-    this.children = _.map(object.data.children, child => {
-      return new Comment(child);
-    });
+    this.children = object.data.children.map(child => new Comment(child));
     this.kind = object.kind;
     this.modhash = object.data.modhash;
   }
@@ -42,6 +40,8 @@ class Comment {
     this.id = object.data.id;
     this.kind = object.kind;
     this.parentId = object.data.parent_id || null;
+    this.subreddit = object.data.subreddit;
+    this.url = object.data.url;
   }
 }
 
@@ -90,20 +90,21 @@ class BrannockSize {
       throw new Error;
     }
 
-    let [ matchVal, ...rest ] = match;
+    const [ matchVal, ...rest ] = match;
     return this.fromString(matchVal);
   }
 }
 
-/**
- * Extract each size thread from the raw thread data.
- * @param {Object} raw_thread - The thread, deserialized JSON.
- * @return {Array[Listing]} subthreads
- */
-const getSizeThreads = function(rawThread) {
-  const [ op, mainThread ] = rawThread.map(listing => new Listing(listing));
+const splitThread = function(rawThread) {
+  const [ opListing, mainThread ] = rawThread.map(obj => new Listing(obj));
+  const op = _.first(opListing.children);
   const comments = mainThread.children;
-  const threadAuthor = _.first(op.children).author;
+  return { op, comments };
+};
+
+// Extract each size thread from the raw thread data.
+const getSizeThreads = function(op, comments) {
+  const threadAuthor = op.author;
 
   // Top level comments (with replies) in the thread.
   // Each top level comment should start a subthread per
@@ -119,4 +120,5 @@ module.exports = {
   Comment,
   Listing,
   getSizeThreads,
+  splitThread,
 };

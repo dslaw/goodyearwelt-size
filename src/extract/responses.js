@@ -62,4 +62,5 @@ const extractSizeRecords = function(comment) {
 
 module.exports = {
   extractSizeRecords,
+  notNil,
 };
