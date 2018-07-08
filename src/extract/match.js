@@ -50,12 +50,12 @@ const stickyMatch = function(line, fns, nChars) {
   // Ensure output is always uppercase. Spacing won't be returned.
   const inputString = collapseSpaces(line).toUpperCase();
   const matches = [];
-  let startPos = 0
-    endPos = inputString.length;
+  let startPos = 0;
+  let endPos = inputString.length;
 
-  for (const fn of fns) {
+  fns.forEach((fn) => {
     const string = inputString.slice(startPos, endPos);
-    let { match, captures, index } = fn(string);
+    const { match, index } = fn(string);
     if (match) {
       // Constrain the search space after the number is found,
       // as the pattern for `width` may generate a lot of false
@@ -63,17 +63,16 @@ const stickyMatch = function(line, fns, nChars) {
       // international convention).
       startPos += index + match.length;
       endPos = startPos + nChars;
-      match = match.trim();
     }
     matches.push(match || null);
-  }
+  });
 
-  return matches;
+  return matches.map(match => (match ? match.trim() : match));
 };
 
 const postMatch = function(line) {
   const fns = [ matchSize, matchWidth, matchIntl ];
-  const maxCharsAhead = 4;  // Space + three chars for 'EEE'.
+  const maxCharsAhead = 4; // Space + three chars for 'EEE'.
   const matches = stickyMatch(line, fns, maxCharsAhead);
   return {
     size: matches[0],

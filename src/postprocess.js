@@ -28,8 +28,8 @@ const validateExtracted = function(post, pre) {
   // If the sizes don't match, something has gone wrong.
   if (post.size !== pre.size) {
     console.error(
-      `Expected sizes to match, ` +
-      `instead got '${post.size}' and '${pre.size}'`
+      'Expected sizes to match, ',
+      `instead got '${post.size}' and '${pre.size}'`,
     );
     return { size: null, width: null, intl: null };
   }
@@ -38,8 +38,8 @@ const validateExtracted = function(post, pre) {
   let sizing = post;
   if (_.isNil(post.intl) && !_.isNil(pre.intl)) {
     console.debug(
-      `Intl found using precedesMatch but not postMatch, ` +
-      `falling back to precedesMatch`
+      'Intl found using precedesMatch but not postMatch, ',
+      'falling back to precedesMatch',
     );
     sizing = pre;
   }
@@ -86,7 +86,7 @@ const reconcileIntl = function(sizing) {
 
 // Clean up the manufacturer last text.
 const cleanManufacturerLast = function(mlast) {
-  const replace = function(string, [pattern, replacement]) {
+  const replace = function(string, [ pattern, replacement ]) {
     return string.replace(pattern, replacement);
   };
 

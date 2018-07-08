@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb-base",
+  "rules": {
+    "array-bracket-spacing": ["error", "always", {
+      "arraysInArrays": true,
+      "objectsInArrays": false
+    }],
+    "func-names": ["error", "as-needed"],
+    "no-console": "off",
+    "space-before-function-paren": ["error", "never"]
+  }
+}

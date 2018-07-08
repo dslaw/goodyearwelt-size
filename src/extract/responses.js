@@ -11,7 +11,7 @@ const { getSizePairs } = require('./normalize.js');
 // Get relevant size thread metadata and reponses.
 const makeSizeThread = function(comment) {
   const bs = BrannockSize.fromComment(comment);
-  const replies = _.get(comment, 'replies.children') || []; 
+  const replies = _.get(comment, 'replies.children') || [];
   return {
     id: comment.id,
     brannockSize: bs,
@@ -23,7 +23,7 @@ const makeSizeThread = function(comment) {
 // with size response metadata.
 const pairsToSizeRecords = function(sizeResponse, pairs) {
   const { id } = sizeResponse;
-  return pairs.map(([mlast, text]) => ({ id, mlast, text }));
+  return pairs.map(([ mlast, text ]) => ({ id, mlast, text }));
 };
 
 const notNil = _.negate(_.isNil);

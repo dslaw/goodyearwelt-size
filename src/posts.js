@@ -5,7 +5,7 @@ const SIZE_PATTERN = /([0-9]{1,2}(\.5)?)/i;
 const WIDTH_PATTERN = /Narrow|Wide|[A-Z]{1,3}/i;
 const COMMENT_PATTERN = new RegExp(`(${SIZE_PATTERN.source}\\s*(${WIDTH_PATTERN.source}))`, 'i');
 
-const WIDTH_ADJECTIVES = new Set(['NARROW', 'WIDE']);
+const WIDTH_ADJECTIVES = new Set([ 'NARROW', 'WIDE' ]);
 
 
 class Listing {
@@ -14,6 +14,7 @@ class Listing {
       throw new Error(`Expected 'Listing', got ${object.kind} instead`);
     }
 
+    // eslint-disable-next-line no-use-before-define
     this.children = object.data.children.map(child => new Comment(child));
     this.kind = object.kind;
     this.modhash = object.data.modhash;
@@ -69,7 +70,7 @@ class BrannockSize {
    */
   static fromString(string) {
     const inputString = string.trim();
-    const [ match, ...rest ] = SIZE_PATTERN.exec(inputString);
+    const [ match, , ] = SIZE_PATTERN.exec(inputString);
     const width = inputString.replace(match, '').trim();
     return new this(match, width);
   }
@@ -82,15 +83,15 @@ class BrannockSize {
   static fromComment(comment) {
     const md = comment.body;
     if (_.isNil(md)) {
-      throw new Error;
+      throw new Error();
     }
 
-    let match = COMMENT_PATTERN.exec(md);
+    const match = COMMENT_PATTERN.exec(md);
     if (_.isNil(match)) {
-      throw new Error;
+      throw new Error();
     }
 
-    const [ matchVal, ...rest ] = match;
+    const [ matchVal, , ] = match;
     return this.fromString(matchVal);
   }
 }

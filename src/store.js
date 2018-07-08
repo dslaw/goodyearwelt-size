@@ -39,7 +39,7 @@ const loadData = function(filename) {
  */
 const orderSizes = function(sizes) {
   const brannockSizes = sizes.map(size => BrannockSize.fromString(size));
-  const sorted = _.sortBy(brannockSizes, ['size', 'width']);
+  const sorted = _.sortBy(brannockSizes, [ 'size', 'width' ]);
   return sorted.map(brannockSize => brannockSize.toString());
 };
 

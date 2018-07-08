@@ -12,6 +12,7 @@
     "start": "npm run download && node server.js",
     "download": "bash scripts/download_data.sh",
     "clean": "rm -rf node_modules && rm -f package-lock.json",
+    "lint": "eslint --config=.eslintrc --env=node \"src/**/*.js\"",
     "test": "mocha --recursive"
   },
   "dependencies": {
@@ -21,6 +22,9 @@
     "remove-markdown": "0.2.x"
   },
   "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.12.0",
     "mocha": "4.0.x",
     "rewire": "4.0.x"
   }
