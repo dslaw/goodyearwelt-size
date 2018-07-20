@@ -9,7 +9,7 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "npm run download && node server.js",
+    "start": "npm run download && node --use_strict server.js",
     "download": "bash scripts/download_data.sh",
     "clean": "rm -rf node_modules && rm -f package-lock.json",
     "lint": "eslint --config=.eslintrc --env=node \"src/**/*.js\"",
