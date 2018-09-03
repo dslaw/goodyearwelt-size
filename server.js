@@ -1,8 +1,11 @@
 const express = require('express');
 const path = require('path');
-const { flatMap, memoize } = require('lodash');
+const { flatMap, memoize, sortBy } = require('lodash');
+
+const helpers = require('./src/display/helpers.js');
 const io = require('./src/io.js');
 const { DataStore, loadData } = require('./src/store.js');
+
 
 const app = express();
 const constants = {
@@ -10,8 +13,8 @@ const constants = {
   dataDir: './src/data',
   templatesDir: './templates',
   filenames: [
-      'last_sizing_thread_2017.json',
-      'last_sizing_thread_2018.json',
+    'last_sizing_thread_2017.json',
+    'last_sizing_thread_2018.json',
   ],
 };
 
@@ -20,12 +23,22 @@ const dataFilenames = constants.filenames
 const dataStore = new DataStore(flatMap(dataFilenames, loadData));
 
 const getTemplate = memoize(io.getTemplate);
+io.registerHelpers(Object.values(helpers));
+
+
+app.use(express.static('assets'));
 
 
 app.get('/', (req, res) => {
   const templateFilename = path.join(constants.templatesDir, 'index.html');
   const renderer = getTemplate(templateFilename);
-  const html = renderer(dataStore);
+
+  const sizes = dataStore.sizes
+    .map((size) => {
+      const count = dataStore.getSize(size).length;
+      return { size, count };
+    });
+  const html = renderer({ sizes });
   res.send(html);
 });
 
@@ -40,10 +53,11 @@ app.get('/sizes/:size', (req, res) => {
     'default': () => {
       const templateFilename = path.join(
         constants.templatesDir,
-        'table_rows.html'
+        'table.html'
       );
       const renderer = getTemplate(templateFilename);
-      const html = renderer({ data });
+      const records = sortBy(data, sizeRecord => sizeRecord.mlast);
+      const html = renderer({ records });
       res.send(html);
     },
     'application/json': () => {

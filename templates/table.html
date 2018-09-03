@@ -1,0 +1,31 @@
+<table class="table is-hoverable is-fullwidth">
+  <thead class="has-background-light">
+    <tr>
+      <th>Brannock</th>
+      <th>Model &amp; Last</th>
+      <th>Tag</th>
+      <th>Convention</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {{~#each records}}
+      <tr>
+        <td>{{{formatBrannockSize brannockSize}}}</td>
+        <td>{{mlast}}</td>
+        <td>{{{formatManufacturerSize size width}}}</td>
+        <td>
+          {{#if intl}}
+            {{intl}}
+          {{else}}
+            &mdash;
+          {{/if}}
+        </td>
+        <td>
+          <a href="{{{formatThreadUrl threadUrl id}}}" target="_blank">{{text}}</a>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

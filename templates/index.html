@@ -7,85 +7,56 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-
   <title>Goodyearwelt Sizes</title>
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
 </head>
 
 <body>
-  <div id="content" class="container">
-    <header class="header clearfix">
-      <h3 class="text-muted">Goodyearwelt Sizes</h3>
-    </header>
+  <section class="hero has-shadow">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title">Goodyearwelt Sizes</h3>
+        <h3 class="subtitle">
+          Sizing recommendations from <a class="has-text-link" href="https://reddit.com/r/goodyearwelt">/r/goodyearwelt</a>
+        </h3>
+      </div>
+    </div>
+  </section> <!-- /hero -->
 
-    <div id="main" class="container">
+  <section class="main-content columns is-fullheight">
+    <nav id="sidebar" class="panel column is-3 is-fullheight">
+      <p class="panel-heading">Browse</p>
 
-      <div id="introduction">
-        <h2>Manufacturer Last Sizing Information from <a href="https://reddit.com/r/goodyearwelt">/r/goodyearwelt</a>.</h2>
-        <br>
-        <p>
-          Browse user supplied information on sizing shoes,
-          by manufacturer/last, based on your Brannock size.
-        </p>
-      </div> <!-- /introduction -->
+      <p id="search-tabs-container" class="panel-tabs">
+        <a class="is-active">Brannock</a>
+      </p>
 
-      <div id="size-selection" class="dropdown">
-        <button id="selection-menu" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
-          Select Brannock Size (US)
-        </button>
-        <div id="size-selection-options" class="dropdown-menu pre-scrollable" aria-labelledby="dropdownMenuButton">
-          {{#each sizes}}
-            <a class="dropdown-item" role="menuitem" href="#" onclick="fill_table(this)">{{this}}</a>
-          {{/each}}
-        </div> <!-- /size-selection-options -->
-      </div> <!-- /size-selection -->
+      {{~#each sizes}}
+      <a class="panel-block" data-size="{{size}}">
+        <div class="column">
+          <div class="is-pulled-left">
+            <span class="panel-icon">
+              <i class="fas fa-shoe-prints" aria-hidden="true"></i>
+            </span>
+            {{size}}
+          </div>
+          <div class="is-pulled-right">
+            <span class="tag is-dark is-rounded">{{count}}</span>
+          </div>
+        </div>
+      </a>
+      {{/each}}
+    </nav> <!-- /sidebar -->
 
-      <br>
+    <div class="container column is-7 is-offset-1">
+      <div id="table-container" class="section">
+      </div> <!-- /table-container -->
+    </div>
 
-      <div id="display">
-        <table id="size-table" class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>Manufacturer Last</th>
-              <th>Size</th>
-              <th>Width</th>
-              <th>US/UK/EU</th>
-              <th>Full Text</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-
-      </div> <!-- /display -->
-    </div> <!-- /main -->
-
-  </div> <!-- /content -->
-
-  <script>
-    const fill_table = function(ele) {
-      let size = ele.innerHTML;
-      let req = $.ajax({
-        url: '/sizes/' + size,
-        method: 'GET',
-        headers: {
-          'Accept': 'text/html; charset=utf-8',
-          'Content-Type': 'text/plain; charset=utf-8',
-        },
-      })
-      .done(function(html) {
-        $('#size-table tbody tr').remove();
-        $('#size-table tbody').append(html);
-      })
-      .fail(function() {
-        alert('Unable to retrieve sizing data');
-      });
-    };
-  </script>
-
-  <!-- Bootstrap dependencies. -->
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </section> <!-- /main-content -->
 </body>
+
+<script src="js/sizes.js"></script>
 </html>

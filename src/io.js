@@ -20,9 +20,21 @@ const getTemplate = function(filename) {
   return handlebars.compile(template);
 };
 
+/**
+ * Register handlebars helper functions.
+ * @param {Array[function]} helpers - Helper functions.
+ * @return never
+ */
+const registerHelpers = function(helpers) {
+  helpers.forEach((helper) => {
+    handlebars.registerHelper(helper.name, helper);
+  });
+};
+
 
 module.exports = {
   getTemplate,
   readFile,
   readJSON,
+  registerHelpers,
 };
