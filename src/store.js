@@ -32,29 +32,78 @@ const loadData = function(filename) {
   return addThreadMetadata(op, processed);
 };
 
-/**
- * Sort Brannock sizes.
- * @param {Array[string]} sizes - Brannock sizes as strings.
- * @return {Array[string]} - Sorted Brannock sizes.
- */
-const orderSizes = function(sizes) {
-  const brannockSizes = sizes.map(size => BrannockSize.fromString(size));
-  const sorted = _.sortBy(brannockSizes, [ 'size', 'width' ]);
-  return sorted.map(brannockSize => brannockSize.toString());
+
+const makeOrderedIndex = function(values, iteratee) {
+  // Create an index pointing to the array positions.
+  const index = new Map();
+  values.forEach((value, idx) => {
+    if (index.has(value)) {
+      index.get(value).push(idx);
+    } else {
+      index.set(value, [ idx ]);
+    }
+  });
+
+  // Order the index keys and leave the index itself unordered.
+  // While the index could also be created so that its keys are
+  // ordered, this seems like relying too much on an implementation
+  // detail, so we explicitly handle it.
+  const keys = Array.from(index.keys());
+  const sortedKeys = _.sortBy(keys, iteratee);
+  return [ index, sortedKeys ];
+};
+
+const makeSizeIndex = function(sizeRecords) {
+  // Use the display value of each brannock size as the key.
+  const brannockSizes = sizeRecords.map(r => r.brannockSize.toString());
+  return makeOrderedIndex(brannockSizes, [
+    key => BrannockSize.fromString(key).size,
+    key => BrannockSize.fromString(key).width,
+  ]);
+};
+
+const makeMlastIndex = function(sizeRecords) {
+  const mlasts = sizeRecords.map(r => r.mlast);
+  return makeOrderedIndex(mlasts, [
+    key => key.toLowerCase(),
+  ]);
+};
+
+const countIndexed = function(index, keys, name) {
+  // Passing in `keys` allows caller to define the order.
+  return keys.map((key) => {
+    const count = index.get(key).length;
+    return { [name]: key, count };
+  });
 };
 
 class DataStore {
   constructor(sizingData) {
-    this.data = _.groupBy(sizingData, 'brannockSize');
-    this.sizes = orderSizes(_.keys(this.data));
+    this.data = sizingData;
+    [ this.sizeIndex, this.sizes ] = makeSizeIndex(this.data);
+    [ this.mlastIndex, this.mlasts ] = makeMlastIndex(this.data);
   }
 
   get() {
-    return _.flatMap(this.sizes, size => this.data[size]);
+    return _.flatMap(this.sizes, size => this.getSize(size));
   }
 
   getSize(size) {
-    return this.data[size] || [];
+    const indices = this.sizeIndex.get(size) || [];
+    return indices.map(idx => this.data[idx]);
+  }
+
+  countSizes() {
+    return countIndexed(this.sizeIndex, this.sizes, 'size');
+  }
+
+  getMlast(mlast) {
+    const indices = this.mlastIndex.get(mlast) || [];
+    return indices.map(idx => this.data[idx]);
+  }
+
+  countMlasts() {
+    return countIndexed(this.mlastIndex, this.mlasts, 'mlast');
   }
 }
 

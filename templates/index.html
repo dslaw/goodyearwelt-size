@@ -11,6 +11,12 @@
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+
+  <style>
+  .hidden {
+    display: none;
+  }
+  </style>
 </head>
 
 <body>
@@ -30,24 +36,49 @@
       <p class="panel-heading">Browse</p>
 
       <p id="search-tabs-container" class="panel-tabs">
-        <a class="is-active">Brannock</a>
+        <a class="is-active" data-target="brannock">Brannock</a>
+        <a data-target="mlast">Model &amp; Last</a>
       </p>
 
-      {{~#each sizes}}
-      <a class="panel-block" data-size="{{size}}">
-        <div class="column">
-          <div class="is-pulled-left">
-            <span class="panel-icon">
-              <i class="fas fa-shoe-prints" aria-hidden="true"></i>
-            </span>
-            {{size}}
-          </div>
-          <div class="is-pulled-right">
-            <span class="tag is-dark is-rounded">{{count}}</span>
-          </div>
+      <div id="select-opts-container">
+        <div id="brannock-selections-container">
+          {{~#each sizes}}
+          <a class="panel-block" data-target="size" data-value="{{size}}">
+            <div class="column">
+              <div class="is-pulled-left">
+                <span class="panel-icon">
+                  <i class="fas fa-shoe-prints" aria-hidden="true"></i>
+                </span>
+                {{size}}
+              </div>
+              <div class="is-pulled-right">
+                <span class="tag is-dark is-rounded">{{count}}</span>
+              </div>
+            </div>
+          </a>
+          {{/each}}
         </div>
-      </a>
-      {{/each}}
+
+        <div id="mlast-selections-container" class="hidden">
+          {{~#each mlasts}}
+          <a class="panel-block" data-target="mlast" data-value="{{mlast}}">
+            <div class="column">
+              <div class="is-pulled-left">
+                <span class="panel-icon">
+                  <!-- TODO: a different icon -->
+                  <i class="fas fa-shoe-prints" aria-hidden="true"></i>
+                </span>
+                {{mlast}}
+              </div>
+              <div class="is-pulled-right">
+                <span class="tag is-dark is-rounded">{{count}}</span>
+              </div>
+            </div>
+          </a>
+          {{/each}}
+        </div>
+
+      </div> <!-- /select-opts-container -->
     </nav> <!-- /sidebar -->
 
     <div class="container column is-7 is-offset-1">
@@ -58,5 +89,5 @@
   </section> <!-- /main-content -->
 </body>
 
-<script src="js/sizes.js"></script>
+<script src="js/ui.js"></script>
 </html>

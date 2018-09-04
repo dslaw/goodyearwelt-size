@@ -33,12 +33,9 @@ app.get('/', (req, res) => {
   const templateFilename = path.join(constants.templatesDir, 'index.html');
   const renderer = getTemplate(templateFilename);
 
-  const sizes = dataStore.sizes
-    .map((size) => {
-      const count = dataStore.getSize(size).length;
-      return { size, count };
-    });
-  const html = renderer({ sizes });
+  const sizes = dataStore.countSizes();
+  const mlasts = dataStore.countMlasts();
+  const html = renderer({ sizes, mlasts });
   res.send(html);
 });
 
@@ -47,17 +44,35 @@ app.get('/sizing', (req, res) => {
   res.json(data);
 });
 
+const renderTable = function(data) {
+  const templateFilename = path.join(
+    constants.templatesDir,
+    'table.html'
+  );
+  const renderer = getTemplate(templateFilename);
+  const records = sortBy(data, sizeRecord => sizeRecord.mlast);
+  const html = renderer({ records });
+  return html;
+};
+
 app.get('/sizes/:size', (req, res) => {
   const data = dataStore.getSize(req.params.size);
   res.format({
     'default': () => {
-      const templateFilename = path.join(
-        constants.templatesDir,
-        'table.html'
-      );
-      const renderer = getTemplate(templateFilename);
-      const records = sortBy(data, sizeRecord => sizeRecord.mlast);
-      const html = renderer({ records });
+      const html = renderTable(data);
+      res.send(html);
+    },
+    'application/json': () => {
+      res.send(data);
+    },
+  });
+});
+
+app.get('/model-lasts/:mlast', (req, res) => {
+  const data = dataStore.getMlast(req.params.mlast);
+  res.format({
+    'default': () => {
+      const html = renderTable(data);
       res.send(html);
     },
     'application/json': () => {

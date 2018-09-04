@@ -7,7 +7,6 @@ const { BrannockSize } = require('../src/posts.js');
 
 // Private functions.
 const addThreadMetadata = store.__get__('addThreadMetadata');
-const orderSizes = store.__get__('orderSizes');
 
 const assertAll = function(array) {
   const allTrue = array.reduce((acc, ele) => acc && ele, true);
@@ -55,52 +54,48 @@ describe('Add thread metadata to size records', () => {
   });
 });
 
-describe('Order Brannock sizes', () => {
-  it('Should sort brannock sizes by size and width', () => {
-    const sizes = [ '8D', '10D', '10E', '10EE', '11D', '8A', '8F' ];
-    const expected = [ '8A', '8D', '8F', '10D', '10E', '10EE', '11D' ];
-
-    const out = orderSizes(sizes);
-    assert.deepStrictEqual(out, expected);
-  });
-});
-
 describe('Load data from JSON file', () => {
   it.skip('Should load sizing records from a JSON file');
 });
 
 describe('In-memory data store', () => {
   const sizingData = [
-    { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1' },
-    { brannockSize: new BrannockSize('10', 'D'), size: 10, width: 'D', text: '2' },
-    { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '3' },
+    { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1', mlast: 'Red Wing' },
+    { brannockSize: new BrannockSize('10', 'D'), size: 10, width: 'D', text: '2', mlast: 'Red Wing'},
+    { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '3', mlast: 'Alden' },
   ];
 
-  it('Should group data', () => {
+  it('Should store sorted, unique sizes', () => {
     const dataStore = new store.DataStore(sizingData);
-    assert.notStrictEqual(dataStore.data, undefined);
-
-    const dataKeys = Object.keys(dataStore.data);
-    assert.strictEqual(dataKeys.length, 2);
-
-    assert.strictEqual(dataStore.data['8D'].length, 2);
-    assert.strictEqual(dataStore.data['10D'].length, 1);
+    const expected = [ '8D', '10D' ];
+    assert.deepStrictEqual(dataStore.sizes, expected);
   });
 
-  it('Should store sizes', () => {
+  it('Should store sorted, unique model-lasts', () => {
     const dataStore = new store.DataStore(sizingData);
-    const expected = ['8D', '10D'];
-    assert.deepStrictEqual(dataStore.sizes, expected);
+    const expected = [ 'Alden', 'Red Wing' ];
+    assert.deepStrictEqual(dataStore.mlasts, expected);
   });
 
   it('Should get size records by size', () => {
     const dataStore = new store.DataStore(sizingData);
     const expected = [
-      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1' },
-      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '3' },
+      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1', mlast: 'Red Wing' },
+      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '3', mlast: 'Alden' },
     ];
 
     const out = dataStore.getSize('8D');
+    assert.deepStrictEqual(out, expected);
+  });
+
+  it('Should get size records by model-last', () => {
+    const dataStore = new store.DataStore(sizingData);
+    const expected = [
+      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1', mlast: 'Red Wing' },
+      { brannockSize: new BrannockSize('10', 'D'), size: 10, width: 'D', text: '2', mlast: 'Red Wing'},
+    ];
+
+    const out = dataStore.getMlast('Red Wing');
     assert.deepStrictEqual(out, expected);
   });
 
@@ -110,15 +105,43 @@ describe('In-memory data store', () => {
     assert.deepStrictEqual(dataStore.getSize(''), []);
   });
 
-  it('Should get flattened size records in order', () => {
+  it('Should return empty array when model-last is not present', () => {
+    const dataStore = new store.DataStore(sizingData);
+    assert.deepStrictEqual(dataStore.getMlast('foo'), []);
+    assert.deepStrictEqual(dataStore.getMlast(''), []);
+  });
+
+  it('Should get flattened size records in order of size', () => {
     const dataStore = new store.DataStore(sizingData);
     const expected = [
-      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1' },
-      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '3' },
-      { brannockSize: new BrannockSize('10', 'D'), size: 10, width: 'D', text: '2' },
+      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '1', mlast: 'Red Wing' },
+      { brannockSize: new BrannockSize('8', 'D'), size: 8, width: 'D', text: '3', mlast: 'Alden' },
+      { brannockSize: new BrannockSize('10', 'D'), size: 10, width: 'D', text: '2', mlast: 'Red Wing' },
     ];
 
     const out = dataStore.get();
+    assert.deepStrictEqual(out, expected);
+  });
+
+  it('Should get counts of sizes, in order', () => {
+    const dataStore = new store.DataStore(sizingData);
+    const expected = [
+      { size: '8D', count: 2 },
+      { size: '10D', count: 1 },
+    ];
+
+    const out = dataStore.countSizes();
+    assert.deepStrictEqual(out, expected);
+  });
+
+  it('Should get counts of sizes, in order', () => {
+    const dataStore = new store.DataStore(sizingData);
+    const expected = [
+      { mlast: 'Alden', count: 1 },
+      { mlast: 'Red Wing', count: 2 },
+    ];
+
+    const out = dataStore.countMlasts();
     assert.deepStrictEqual(out, expected);
   });
 });
