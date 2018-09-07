@@ -17,8 +17,9 @@
   },
   "dependencies": {
     "express": "4.15.x",
-    "handlebars": "4.0.x",
     "lodash": "4.17.x",
+    "mustache": "2.3.x",
+    "mustache-express": "1.2.x",
     "remove-markdown": "0.2.x"
   },
   "devDependencies": {

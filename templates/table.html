@@ -10,22 +10,16 @@
   </thead>
 
   <tbody>
-    {{~#each records}}
+    {{#records}}
       <tr>
-        <td>{{{formatBrannockSize brannockSize}}}</td>
+        <td>{{brannockSize}}</td>
         <td>{{mlast}}</td>
-        <td>{{{formatManufacturerSize size width}}}</td>
+        <td>{{tagSize}}</td>
+        <td>{{{intl}}}</td>
         <td>
-          {{#if intl}}
-            {{intl}}
-          {{else}}
-            &mdash;
-          {{/if}}
-        </td>
-        <td>
-          <a href="{{{formatThreadUrl threadUrl id}}}" target="_blank" rel="noopener noreferrer">{{text}}</a>
+          <a href="{{commentUrl}}" target="_blank" rel="noopener noreferrer">{{text}}</a>
         </td>
       </tr>
-    {{/each}}
+    {{/records}}
   </tbody>
 </table>

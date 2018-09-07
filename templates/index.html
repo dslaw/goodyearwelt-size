@@ -42,7 +42,7 @@
 
       <div id="select-opts-container">
         <div id="brannock-selections-container">
-          {{~#each sizes}}
+          {{#sizes}}
           <a class="panel-block" data-target="size" data-value="{{size}}">
             <div class="column">
               <div class="is-pulled-left">
@@ -56,11 +56,11 @@
               </div>
             </div>
           </a>
-          {{/each}}
+          {{/sizes}}
         </div>
 
         <div id="mlast-selections-container" class="hidden">
-          {{~#each mlasts}}
+          {{#mlasts}}
           <a class="panel-block" data-target="mlast" data-value="{{mlast}}">
             <div class="column">
               <div class="is-pulled-left">
@@ -75,7 +75,7 @@
               </div>
             </div>
           </a>
-          {{/each}}
+          {{/mlasts}}
         </div>
 
       </div> <!-- /select-opts-container -->

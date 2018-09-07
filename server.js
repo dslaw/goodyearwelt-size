@@ -1,9 +1,9 @@
 const express = require('express');
+const { flatMap } = require('lodash');
+const mustacheExpress = require('mustache-express');
 const path = require('path');
-const { flatMap, memoize, sortBy } = require('lodash');
 
-const helpers = require('./src/display/helpers.js');
-const io = require('./src/io.js');
+const { sortSizeRecords, withDisplayValues } = require('./src/display.js');
 const { DataStore, loadData } = require('./src/store.js');
 
 
@@ -11,7 +11,6 @@ const app = express();
 const constants = {
   port: 3030,
   dataDir: './src/data',
-  templatesDir: './templates',
   filenames: [
     'last_sizing_thread_2017.json',
     'last_sizing_thread_2018.json',
@@ -22,21 +21,17 @@ const dataFilenames = constants.filenames
   .map(fname => path.join(constants.dataDir, fname));
 const dataStore = new DataStore(flatMap(dataFilenames, loadData));
 
-const getTemplate = memoize(io.getTemplate);
-io.registerHelpers(Object.values(helpers));
 
-
+app.engine('html', mustacheExpress());
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, '/templates'));
 app.use(express.static('assets'));
 
 
 app.get('/', (req, res) => {
-  const templateFilename = path.join(constants.templatesDir, 'index.html');
-  const renderer = getTemplate(templateFilename);
-
   const sizes = dataStore.countSizes();
   const mlasts = dataStore.countMlasts();
-  const html = renderer({ sizes, mlasts });
-  res.send(html);
+  res.render('index', { sizes, mlasts });
 });
 
 app.get('/sizing', (req, res) => {
@@ -44,23 +39,20 @@ app.get('/sizing', (req, res) => {
   res.json(data);
 });
 
-const renderTable = function(data) {
-  const templateFilename = path.join(
-    constants.templatesDir,
-    'table.html'
-  );
-  const renderer = getTemplate(templateFilename);
-  const records = sortBy(data, sizeRecord => sizeRecord.mlast);
-  const html = renderer({ records });
-  return html;
+const tableHelper = function(data) {
+  const records = data.map(withDisplayValues);
+  return {
+    filename: 'table',
+    records: sortSizeRecords(records),
+  };
 };
 
 app.get('/sizes/:size', (req, res) => {
   const data = dataStore.getSize(req.params.size);
   res.format({
     'default': () => {
-      const html = renderTable(data);
-      res.send(html);
+      const { filename, records } = tableHelper(data);
+      res.render(filename, { records });
     },
     'application/json': () => {
       res.send(data);
@@ -72,8 +64,8 @@ app.get('/model-lasts/:mlast', (req, res) => {
   const data = dataStore.getMlast(req.params.mlast);
   res.format({
     'default': () => {
-      const html = renderTable(data);
-      res.send(html);
+      const { filename, records } = tableHelper(data);
+      res.render(filename, { records });
     },
     'application/json': () => {
       res.send(data);
